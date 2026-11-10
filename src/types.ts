@@ -1,8 +1,10 @@
 export type Genre = 'meat' | 'noodle' | 'japanese' | 'asian' | 'western'
 export type Area = 'near' | 'umeda' | 'temma' | 'namba' | 'west' | 'tennoji' | 'east' | 'south' | 'southwest' | 'bay'
 export type FoodType = 'meal' | 'snack' | 'bar'
-/** 'spot' = 특이한 장소 (식당이 아닌 볼거리) */
-export type PlaceType = FoodType | 'spot'
+/** 식당이 아닌 장소: 특이한 장소(볼거리) · 주류 상점 · 면세점 · 라이브 바 */
+export type PoiType = 'spot' | 'liquor' | 'taxfree' | 'livebar'
+export const POI_TYPES: readonly PoiType[] = ['spot', 'livebar', 'liquor', 'taxfree']
+export type PlaceType = FoodType | PoiType
 export type GroupFit = 'ok' | 'maybe' | 'no'
 
 interface PlaceBase {
@@ -35,8 +37,11 @@ export interface Restaurant extends PlaceBase {
   image: string
 }
 
+/** 식당이 아닌 장소 (이름은 처음 만든 '특이한 장소'에서 그대로 씀) */
 export interface Spot extends PlaceBase {
-  type: 'spot'
+  type: PoiType
+  /** 대표 사진 (타베로그 등 출처가 있을 때만) */
+  image?: string | null
   icon: string
   spotKind: string
   description: string
@@ -68,5 +73,5 @@ export type WithDistance = Place & {
   walkMin: number
 }
 
-export const isSpot = (p: Place): p is Spot => p.type === 'spot'
-export const scoreOf = (p: Place): number | null => (p.type === 'spot' ? null : p.tabelogScore)
+export const isSpot = (p: Place): p is Spot => (POI_TYPES as readonly string[]).includes(p.type)
+export const scoreOf = (p: Place): number | null => (isSpot(p) ? null : p.tabelogScore)

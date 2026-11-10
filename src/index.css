@@ -276,3 +276,43 @@ button, select { font: inherit; color: inherit; }
 }
 .cl-spot { background: var(--color-spot); box-shadow: 0 0 0 2px rgb(109 40 217 / 0.35), 0 2px 8px rgb(0 0 0 / 0.35); }
 .cl-mixed { background: linear-gradient(135deg, var(--color-primary) 0 55%, var(--color-spot) 55% 100%); }
+
+/* 식당이 아닌 장소 종류별 색: 특이한 장소(보라) 스타일을 그대로 쓰고 색 변수만 바꾼다 */
+.card-livebar, .mk-livebar, .dot-livebar, .cl-livebar, .qchip-livebar, .group-livebar { --color-spot: #be185d; --color-spot-soft: #fce7f3; }
+.card-liquor, .mk-liquor, .dot-liquor, .cl-liquor, .qchip-liquor, .group-liquor { --color-spot: #92400e; --color-spot-soft: #fef3c7; }
+.card-taxfree, .mk-taxfree, .dot-taxfree, .cl-taxfree, .qchip-taxfree, .group-taxfree { --color-spot: #0f766e; --color-spot-soft: #ccfbf1; }
+.qchip-livebar { border-color: #f9a8d4; }
+.qchip-liquor { border-color: #fcd34d; }
+.qchip-taxfree { border-color: #5eead4; }
+.qchip-spot.on { color: #fff; }
+.mk-spot-img img { width: 100%; height: 100%; object-fit: cover; }
+.dot-liquor i, .dot-taxfree i { border-radius: 50%; }
+.dot-livebar i { border-radius: 50% 50% 6px 50%; }
+
+/* 면세 안내 */
+.taxfree-note { margin: 4px 0 12px; padding: 10px 12px; border-radius: 10px; background: #f0fdfa; border: 1px solid #99f6e4; font-size: 14px; line-height: 1.55; }
+.taxfree-title { font-weight: 800; color: #0f766e; margin: 0 0 4px; }
+.taxfree-note ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
+.taxfree-note .credit { margin-top: 6px; }
+
+/* 지도 안 도보 경로 */
+.btn-route { gap: 6px; color: var(--color-accent); border-color: #93c5fd; }
+.btn-route.on, .btn-route.on:hover { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+.route-panel {
+  position: absolute; z-index: 950; top: 10px; left: calc(10px + var(--safe-left, 0px)); right: calc(10px + var(--safe-right, 0px));
+  max-width: 440px; margin: 0 auto; padding: 10px 12px; border-radius: 14px; background: var(--color-card);
+  box-shadow: 0 6px 20px rgb(15 23 42 / 0.25); border: 2px solid var(--color-accent); font-size: 14px;
+}
+.route-head { display: flex; align-items: flex-start; gap: 8px; }
+.route-title { flex: 1; margin: 0; font-size: 15px; line-height: 1.35; overflow-wrap: anywhere; }
+.route-from { font-weight: 800; color: var(--color-accent); }
+.route-close {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 2px; min-height: 44px; min-width: 44px; padding: 0 10px;
+  border-radius: 10px; border: 1px solid var(--color-border); background: var(--color-card); font: inherit; font-weight: 700; cursor: pointer; color: var(--color-foreground);
+}
+.route-stat { margin: 4px 0 0; font-size: 16px; }
+.route-stat b { color: var(--color-accent); }
+.route-err { font-size: 14px; color: var(--color-destructive); }
+.route-note { margin: 4px 0 0; font-size: 13px; color: var(--color-warning); }
+.route-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.route-credit { margin: 6px 0 0; font-size: 11px; color: var(--color-muted-foreground); }

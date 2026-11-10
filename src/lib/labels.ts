@@ -1,4 +1,4 @@
-import type { Area, Genre, GroupFit, PlaceType } from '../types'
+import type { Area, Genre, GroupFit, PlaceType, PoiType } from '../types'
 
 export const AREA_LABEL: Record<Area, string> = {
   near: '숙소 도보권 (하나조노초·텐가차야)',
@@ -26,6 +26,17 @@ export const TYPE_LABEL: Record<PlaceType, string> = {
   snack: '간식·가벼운 한 끼',
   bar: '술·바',
   spot: '특이한 장소',
+  livebar: '라이브 바',
+  liquor: '주류 상점',
+  taxfree: '면세점',
+}
+
+/** 식당이 아닌 장소의 표시 (지도 마커 색·기호와 목록 머리글) */
+export const POI_META: Record<PoiType, { label: string; mark: string }> = {
+  spot: { label: '특이한 장소', mark: '✦' },
+  livebar: { label: '라이브 바', mark: '♪' },
+  liquor: { label: '주류 상점', mark: '◆' },
+  taxfree: { label: '면세점', mark: '¥' },
 }
 
 export const GROUP_LABEL: Record<GroupFit, string> = {

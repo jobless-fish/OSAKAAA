@@ -1,7 +1,8 @@
-import type { Lodging, Restaurant, Spot, WithDistance } from '../types'
-import { AREA_LABEL, GROUP_LABEL, SPOT_LABEL } from '../lib/labels'
+import { isSpot, type Lodging, type Restaurant, type Spot, type WithDistance } from '../types'
+import { AREA_LABEL, GROUP_LABEL, POI_META } from '../lib/labels'
 import { formatDistance, formatWalk } from '../lib/geo'
 import { closedLabels } from '../lib/trip'
+import { transitUrl } from '../lib/links'
 import { Photo } from './Photo'
 import { Stars } from './Stars'
 
@@ -10,22 +11,53 @@ interface Props {
   lodging: Lodging
   selected: boolean
   onSelect: (id: string) => void
+  /** 지도 위에 도보 경로 그리기 */
+  onRoute: (id: string) => void
+  routeActive: boolean
 }
 
 type D = { distanceKm: number; walkMin: number }
 
 export function RestaurantCard(props: Props) {
   const { r } = props
-  return r.type === 'spot' ? <SpotCard {...props} s={r} /> : <FoodCard {...props} f={r} />
+  return isSpot(r) ? <SpotCard {...props} s={r} /> : <FoodCard {...props} f={r} />
 }
 
-function directionsUrl(lodging: Lodging, lat: number, lng: number, mode: 'transit' | 'walking') {
-  return `https://www.google.com/maps/dir/?api=1&origin=${lodging.lat},${lodging.lng}&destination=${lat},${lng}&travelmode=${mode}`
+
+function RouteLinks({ id, lat, lng, lodging, onRoute, routeActive }: { id: string; lat: number; lng: number; lodging: Lodging; onRoute: (id: string) => void; routeActive: boolean }) {
+  return (
+    <>
+      <button type="button" className={`btn btn-route ${routeActive ? 'on' : ''}`} aria-pressed={routeActive} onClick={() => onRoute(id)}>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M13.5 5.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM9.8 8.9 7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3A7.3 7.3 0 0 0 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/></svg>
+        {routeActive ? '도보 경로 표시 중' : '길찾기 (지도에 도보 경로)'}
+      </button>
+      <a className="btn" href={transitUrl(lodging, lat, lng)} target="_blank" rel="noopener noreferrer">구글 지도 (전철·대중교통)</a>
+    </>
+  )
 }
 
-function FoodCard({ f: r, lodging, selected, onSelect }: Props & { f: Restaurant & D }) {
+/** 2026년 11월부터 바뀐 면세(리펀드) 방식 안내 — 관광청·세관 공식 안내 기준 */
+function TaxFreeNote() {
+  return (
+    <div className="taxfree-note">
+      <p className="taxfree-title">2026년 11월 1일부터 면세 방식 변경 (리펀드 방식)</p>
+      <ul>
+        <li>가게에서는 <b>세금 포함 가격으로 결제</b>하고, 출국할 때 공항 세관 확인 후 소비세를 돌려받아요.</li>
+        <li>같은 날 <b>한 점포 5,000엔 이상(세금 제외)</b> 살 때 대상. 계산할 때 <b>여권</b>을 꼭 보여 주세요.</li>
+        <li>출국일에 짐을 부치기 전, 공항 키오스크에서 여권으로 확인 (간사이공항은 Visit Japan Web도 가능). 물건은 뜯지 말고 들고 나가야 해요.</li>
+        <li>환급은 구매 때 고른 방법(카드 등)으로, 간사이공항은 출국 심사 뒤 카운터에서 현금도 가능.</li>
+      </ul>
+      <p className="credit">
+        출처: <a href="https://www.mlit.go.jp/kankocho/tax-free/page01_000001_00021.html" target="_blank" rel="noopener noreferrer">관광청 면세 안내</a> ·{' '}
+        <a href="https://www.customs.go.jp/kaigairyoko/taxrefund.htm" target="_blank" rel="noopener noreferrer">일본 세관</a> ·{' '}
+        <a href="https://www.kansai-airport.or.jp/tax-refund" target="_blank" rel="noopener noreferrer">간사이공항</a>
+      </p>
+    </div>
+  )
+}
+
+function FoodCard({ f: r, lodging, selected, onSelect, onRoute, routeActive }: Props & { f: Restaurant & D }) {
   const closed = closedLabels(r.closedDates)
-  const directions = directionsUrl(lodging, r.lat, r.lng, r.walkMin <= 15 ? 'walking' : 'transit')
   return (
     <article className={`card ${selected ? 'is-selected' : ''}`} id={`card-${r.id}`} aria-labelledby={`title-${r.id}`}>
       <button
@@ -49,7 +81,7 @@ function FoodCard({ f: r, lodging, selected, onSelect }: Props & { f: Restaurant
           </p>
           <div className="chips">
             <span className={`chip chip-${r.group}`}>{GROUP_LABEL[r.group]}</span>
-            {r.walkMin <= 10 && <span className="chip chip-walk">도보 10분</span>}
+            {r.walkMin <= 10 && <span className="chip chip-walk">도보 {r.walkMin <= 5 ? 5 : 10}분</span>}
             {closed.length > 0 && <span className="chip chip-closed">휴무 {closed.join(', ')}</span>}
             {r.closedNote && <span className="chip chip-warn">영업일 확인 필요</span>}
           </div>
@@ -70,7 +102,7 @@ function FoodCard({ f: r, lodging, selected, onSelect }: Props & { f: Restaurant
           <div className="links">
             <a className="btn btn-primary" href={r.tabelogUrl} target="_blank" rel="noopener noreferrer">타베로그에서 보기</a>
             {r.courseUrl && <a className="btn" href={r.courseUrl} target="_blank" rel="noopener noreferrer">코스 보기</a>}
-            <a className="btn" href={directions} target="_blank" rel="noopener noreferrer">숙소에서 길찾기</a>
+            <RouteLinks id={r.id} lat={r.lat} lng={r.lng} lodging={lodging} onRoute={onRoute} routeActive={routeActive} />
           </div>
           <p className="credit">사진·점수: <a href={r.tabelogUrl} target="_blank" rel="noopener noreferrer">타베로그</a> · 거리·시간은 직선거리 기준 추정치</p>
         </div>
@@ -79,11 +111,18 @@ function FoodCard({ f: r, lodging, selected, onSelect }: Props & { f: Restaurant
   )
 }
 
-function SpotCard({ s, lodging, selected, onSelect }: Props & { s: Spot & D }) {
+function feeChip(s: Spot): string {
+  if (s.type === 'taxfree') return '면세 5,000엔~'
+  if (s.type === 'liquor') return s.fee.startsWith('면세') ? '면세 가능' : s.spotKind.includes('가쿠우치') ? '서서 한 잔' : '술 사기'
+  if (s.type === 'livebar') return s.fee.startsWith('노 차지') ? '노 차지' : s.fee.startsWith('투게센') ? '팁(투게센)' : '라이브 요금'
+  return s.fee.startsWith('무료') ? '무료' : s.fee === '—' ? '관람 시설 아님' : '유료'
+}
+
+function SpotCard({ s, lodging, selected, onSelect, onRoute, routeActive }: Props & { s: Spot & D }) {
   const closed = closedLabels(s.closedDates)
-  const directions = directionsUrl(lodging, s.lat, s.lng, s.walkMin <= 15 ? 'walking' : 'transit')
+  const meta = POI_META[s.type]
   return (
-    <article className={`card card-spot ${selected ? 'is-selected' : ''}`} id={`card-${s.id}`} aria-labelledby={`title-${s.id}`}>
+    <article className={`card card-spot card-${s.type} ${selected ? 'is-selected' : ''}`} id={`card-${s.id}`} aria-labelledby={`title-${s.id}`}>
       <button
         type="button"
         className="card-main"
@@ -92,19 +131,23 @@ function SpotCard({ s, lodging, selected, onSelect }: Props & { s: Spot & D }) {
         aria-expanded={selected}
         onClick={() => onSelect(s.id)}
       >
-        <div className="card-photo spot-tile" aria-hidden="true"><span>{s.icon}</span></div>
+        {s.image ? (
+          <Photo src={s.image} alt={`${s.nameKo} 대표 사진`} fallbackText={s.spotKind} className="card-photo" />
+        ) : (
+          <div className="card-photo spot-tile" aria-hidden="true"><span>{s.icon}</span></div>
+        )}
         <div className="card-body">
           <h3 className="card-title" id={`title-${s.id}`}>{s.nameKo}</h3>
           <p className="card-ja" lang="ja">{s.nameJa}</p>
-          <p className="spot-kind"><span aria-hidden="true">✦</span> {SPOT_LABEL} · {s.spotKind}</p>
+          <p className="spot-kind"><span aria-hidden="true">{meta.mark}</span> {meta.label} · {s.spotKind}</p>
           <p className="card-dist">
             숙소에서 {formatDistance(s.distanceKm)} · {formatWalk(s.walkMin)}
           </p>
           <div className="chips">
-            <span className="chip chip-spot">{s.fee.startsWith('무료') ? '무료' : s.fee === '—' ? '관람 시설 아님' : '유료'}</span>
-            {s.walkMin <= 10 && <span className="chip chip-walk">도보 10분</span>}
+            <span className="chip chip-spot">{feeChip(s)}</span>
+            {s.walkMin <= 10 && <span className="chip chip-walk">도보 {s.walkMin <= 5 ? 5 : 10}분</span>}
             {closed.length > 0 && <span className="chip chip-closed">휴무 {closed.join(', ')}</span>}
-            {s.tip && <span className="chip chip-warn">에티켓 주의</span>}
+            {s.tip && <span className="chip chip-warn">{s.type === 'spot' ? '에티켓 주의' : '6명 팁'}</span>}
           </div>
         </div>
       </button>
@@ -113,15 +156,16 @@ function SpotCard({ s, lodging, selected, onSelect }: Props & { s: Spot & D }) {
           <p className="spot-desc">{s.description}</p>
           <dl>
             <dt>가는 법</dt><dd>{s.station}</dd>
-            <dt>시간</dt><dd>{s.hours}</dd>
-            <dt>요금</dt><dd>{s.fee}</dd>
-            {s.tip && (<><dt>에티켓</dt><dd>{s.tip}</dd></>)}
+            <dt>{s.type === 'spot' ? '시간' : '영업'}</dt><dd>{s.hours}</dd>
+            <dt>{s.type === 'taxfree' ? '면세' : s.type === 'livebar' ? '요금' : s.type === 'liquor' ? '참고' : '요금'}</dt><dd>{s.fee}</dd>
+            {s.tip && (<><dt>{s.type === 'spot' ? '에티켓' : '6명'}</dt><dd>{s.tip}</dd></>)}
             {s.closedNote && (<><dt>주의</dt><dd>{s.closedNote}</dd></>)}
             <dt>주소</dt><dd lang="ja">{s.address}</dd>
           </dl>
+          {s.type === 'taxfree' && <TaxFreeNote />}
           <div className="links">
             <a className="btn btn-spot" href={s.infoUrl} target="_blank" rel="noopener noreferrer">{s.infoLabel}</a>
-            <a className="btn" href={directions} target="_blank" rel="noopener noreferrer">숙소에서 길찾기</a>
+            <RouteLinks id={s.id} lat={s.lat} lng={s.lng} lodging={lodging} onRoute={onRoute} routeActive={routeActive} />
           </div>
           <p className="credit">정보: <a href={s.infoUrl} target="_blank" rel="noopener noreferrer">{s.infoLabel}</a> (2026년 11월 확인)</p>
         </div>

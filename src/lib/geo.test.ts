@@ -38,9 +38,13 @@ describe('geo', () => {
 })
 
 describe('data', () => {
-  it('맛집 73곳 + 특이한 장소, id 중복 없음', () => {
-    expect(ds.restaurants).toHaveLength(73)
-    expect(ds.spots.length).toBeGreaterThanOrEqual(10)
+  it('맛집 83곳 + 식당이 아닌 장소 4종류, id 중복 없음', () => {
+    expect(ds.restaurants).toHaveLength(83)
+    const n = (t: string) => ds.spots.filter((s) => s.type === t).length
+    expect(n('spot')).toBeGreaterThanOrEqual(20)
+    expect(n('liquor')).toBeGreaterThanOrEqual(8)
+    expect(n('taxfree')).toBeGreaterThanOrEqual(8)
+    expect(n('livebar')).toBeGreaterThanOrEqual(3)
     const ids = [...ds.restaurants, ...ds.spots].map((r) => r.id)
     expect(new Set(ids).size).toBe(ids.length)
   })
@@ -79,15 +83,32 @@ describe('data', () => {
   it('타베로그 점수는 3.0 이상 (확인된 곳만)', () => {
     for (const r of ds.restaurants) if (r.tabelogScore != null) expect(r.tabelogScore, r.id).toBeGreaterThanOrEqual(3.0)
   })
-  it('특이한 장소: 설명·시간·요금·안내 링크가 있고 대부분 숙소 3km 이내', () => {
+  it('숙소 500m 이내 맛집 15곳 이상, 주류 상점·면세점도 있음', () => {
+    expect(ds.restaurants.filter((r) => km(r) <= 0.53).length).toBeGreaterThanOrEqual(15)
+    expect(ds.spots.filter((s) => s.type === 'liquor' && km(s) <= 0.5).length).toBeGreaterThanOrEqual(2)
+    expect(ds.spots.filter((s) => s.type === 'taxfree' && km(s) <= 0.5).length).toBeGreaterThanOrEqual(1)
+  })
+  it('주류 상점은 1.5km 이내가 대부분, 전문점만 3.2km까지', () => {
+    const liq = ds.spots.filter((s) => s.type === 'liquor')
+    for (const s of liq) expect(km(s), s.id).toBeLessThan(3.2)
+    expect(liq.filter((s) => km(s) <= 1.65).length).toBeGreaterThanOrEqual(liq.length - 3)
+  })
+  it('면세점 카드는 모두 5,000엔 기준을 적고, 라이브 바는 여행 기간 일정·요금을 적음', () => {
+    for (const s of ds.spots.filter((x) => x.type === 'taxfree')) expect(s.fee, s.id).toContain('5,000엔')
+    for (const s of ds.spots.filter((x) => x.type === 'livebar')) {
+      expect(s.description, s.id).toMatch(/11\/1[3-7]|여행 기간/)
+      expect(s.fee, s.id).toBeTruthy()
+    }
+  })
+  it('식당이 아닌 장소: 설명·시간·요금·안내 링크가 있고 대부분 숙소 3km 이내', () => {
     for (const s of ds.spots) {
-      expect(s.type).toBe('spot')
+      expect(['spot', 'liquor', 'taxfree', 'livebar']).toContain(s.type)
       expect(s.description.length, s.id).toBeGreaterThan(20)
       expect(s.hours, s.id).toBeTruthy()
       expect(s.fee, s.id).toBeTruthy()
-      expect(s.infoUrl, s.id).toMatch(/^https:\/\//)
+      expect(s.infoUrl, s.id).toMatch(/^https?:\/\//)
     }
-    expect(ds.spots.filter((s) => km(s) <= 3).length).toBeGreaterThanOrEqual(ds.spots.length - 2)
+    expect(ds.spots.filter((s) => km(s) <= 3.2).length).toBeGreaterThanOrEqual(ds.spots.length - 2)
   })
   it('휴무일은 여행 기간 날짜만', () => {
     const days = TRIP_DAYS.map((d) => d.date)

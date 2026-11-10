@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import raw from './data/restaurants.json'
-import { scoreOf, type Area, type Dataset, type Genre, type Place, type WithDistance } from './types'
+import { isSpot, POI_TYPES, scoreOf, type Area, type Dataset, type Genre, type Place, type PoiType, type WithDistance } from './types'
 import { haversineKm, walkMinutes } from './lib/geo'
 import { isOpenOn } from './lib/trip'
 import { MapView } from './components/MapView'
@@ -8,7 +8,10 @@ import { RestaurantCard } from './components/RestaurantCard'
 import { Filters } from './components/Filters'
 import { DEFAULT_FILTERS, type FilterState } from './lib/filters'
 import { groupByGenre, sortPlaces } from './lib/sort'
-import { GENRE_LABEL, SPOT_LABEL } from './lib/labels'
+import { GENRE_LABEL, POI_META } from './lib/labels'
+import { fetchRoute, type LatLng } from './lib/route'
+import { RoutePanel, type RouteState } from './components/RoutePanel'
+import { transitUrl } from './lib/links'
 import { QuickFilters } from './components/QuickFilters'
 import { SortControl } from './components/SortControl'
 import { BottomSheet, type Snap } from './components/BottomSheet'
@@ -16,6 +19,18 @@ import { BottomSheet, type Snap } from './components/BottomSheet'
 const data = raw as Dataset
 const AREA_ORDER: Area[] = ['near', 'tennoji', 'south', 'southwest', 'bay', 'namba', 'west', 'umeda', 'temma', 'east']
 const GENRE_ORDER: Genre[] = ['meat', 'noodle', 'japanese', 'asian', 'western']
+
+/** 브라우저 위치 (권한 요청). 실패하면 이유를 담아 reject */
+function getPosition(): Promise<LatLng> {
+  return new Promise((resolve, reject) => {
+    if (!('geolocation' in navigator)) return reject(new Error('이 브라우저는 위치를 지원하지 않아요'))
+    navigator.geolocation.getCurrentPosition(
+      (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      (e) => reject(new Error(e.code === e.PERMISSION_DENIED ? '위치 권한이 거부됐어요' : '현재 위치를 찾지 못했어요')),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+    )
+  })
+}
 
 function useIsDesktop(): boolean {
   const q = '(min-width: 900px)'
@@ -39,6 +54,8 @@ export default function App() {
   const [showFilters, setShowFilters] = useState(false)
   const [recenterKey, setRecenterKey] = useState(0)
   const [fitKey, setFitKey] = useState(0)
+  const [route, setRoute] = useState<RouteState | null>(null)
+  const routeAbort = useRef<AbortController | null>(null)
 
   const all: WithDistance[] = useMemo(
     () =>
@@ -54,7 +71,7 @@ export default function App() {
     const list = all.filter((r) => {
       if (f.type !== 'all' && r.type !== f.type) return false
       if (f.area !== 'all' && r.area !== f.area) return false
-      if (f.genre !== 'all' && (r.type === 'spot' || r.genre !== f.genre)) return false
+      if (f.genre !== 'all' && (isSpot(r) || r.genre !== f.genre)) return false
       if (f.rating === 'scored' && scoreOf(r) == null) return false
       if ((f.rating === '3.6' || f.rating === '3.8') && (scoreOf(r) ?? 0) < Number(f.rating)) return false
       if (f.walk !== 'all' && r.walkMin > Number(f.walk)) return false
@@ -72,9 +89,10 @@ export default function App() {
 
   const quickCounts = useMemo(
     () => ({
+      walk5: all.filter((p) => p.walkMin <= 5).length,
       walk10: all.filter((p) => p.walkMin <= 10).length,
       walk15: all.filter((p) => p.walkMin <= 15).length,
-      spots: all.filter((p) => p.type === 'spot').length,
+      ...(Object.fromEntries(POI_TYPES.map((t) => [t, all.filter((p) => p.type === t).length])) as Record<PoiType, number>),
     }),
     [all],
   )
@@ -101,9 +119,57 @@ export default function App() {
 
   const selectFromMap = useCallback((id: string) => select(id, true), [select])
 
+  /** 지도 안 도보 경로: 버튼을 눌렀을 때만 라우터에 1번 묻는다 (이전 요청은 취소) */
+  const startRoute = useCallback(
+    async (id: string, from: 'lodging' | 'me' = 'lodging') => {
+      const p = all.find((x) => x.id === id)
+      if (!p) return
+      routeAbort.current?.abort()
+      const ac = new AbortController()
+      routeAbort.current = ac
+      const base: RouteState = { id, name: p.nameKo, from, status: 'loading', transitHref: transitUrl(lodging, p.lat, p.lng) }
+      setRoute(base)
+      setSelectedId(id)
+      if (!isDesktop) setSnap('peek')
+      let origin: LatLng = { lat: lodging.lat, lng: lodging.lng }
+      let note: string | undefined
+      if (from === 'me') {
+        try {
+          const me = await getPosition()
+          if (haversineKm(me.lat, me.lng, p.lat, p.lng) > 20) {
+            note = '현재 위치가 목적지에서 20km 넘게 떨어져 있어 숙소 출발 경로로 보여 드려요.'
+            from = 'lodging'
+          } else origin = me
+        } catch (e) {
+          note = `${(e as Error).message} — 숙소 출발 경로로 보여 드려요.`
+          from = 'lodging'
+        }
+        if (ac.signal.aborted) return
+        setRoute({ ...base, from, note })
+      }
+      try {
+        const result = await fetchRoute(origin, { lat: p.lat, lng: p.lng }, ac.signal)
+        if (ac.signal.aborted) return
+        setRoute({ ...base, from, note, status: 'ok', result })
+      } catch (e) {
+        if (ac.signal.aborted) return
+        const msg = (e as Error).name === 'TimeoutError' ? '응답 시간 초과' : (e as Error).message || '네트워크 오류'
+        setRoute({ ...base, from, note, status: 'error', error: msg })
+      }
+    },
+    [all, lodging, isDesktop],
+  )
+
+  const closeRoute = useCallback(() => {
+    routeAbort.current?.abort()
+    setRoute(null)
+  }, [])
+
+  const onRoute = useCallback((id: string) => (route?.id === id ? closeRoute() : void startRoute(id)), [route, closeRoute, startRoute])
+
   const card = (r: WithDistance) => (
     <li key={r.id}>
-      <RestaurantCard r={r} lodging={lodging} selected={r.id === activeId} onSelect={(id) => select(id, false)} />
+      <RestaurantCard r={r} lodging={lodging} selected={r.id === activeId} onSelect={(id) => select(id, false)} onRoute={onRoute} routeActive={route?.id === r.id} />
     </li>
   )
 
@@ -121,7 +187,11 @@ export default function App() {
         />
       </div>
       <p className="count" aria-live="polite">
-        {places.length}곳 표시 중 <span className="muted">/ 맛집 {foodCount} · {SPOT_LABEL} {all.length - foodCount}</span>
+        {places.length}곳 표시 중{' '}
+        <span className="muted">
+          / 맛집 {foodCount}
+          {POI_TYPES.map((t) => ` · ${POI_META[t].label} ${quickCounts[t]}`).join('')}
+        </span>
       </p>
       {places.length === 0 ? (
         <div className="empty">
@@ -132,8 +202,11 @@ export default function App() {
         <ul className="list">
           {filters.sort === 'category'
             ? groupByGenre(places, GENRE_ORDER).flatMap((g) => [
-                <li key={`h-${g.key}`} className={`group-header ${g.key === 'spot' ? 'group-spot' : ''}`}>
-                  <h2>{g.key === 'spot' ? `✦ ${SPOT_LABEL}` : GENRE_LABEL[g.key]} <span className="muted">{g.items.length}곳</span></h2>
+                <li key={`h-${g.key}`} className={`group-header ${g.key in POI_META ? `group-spot group-${g.key}` : ''}`}>
+                  <h2>
+                    {g.key in POI_META ? `${POI_META[g.key as PoiType].mark} ${POI_META[g.key as PoiType].label}` : GENRE_LABEL[g.key as Genre]}{' '}
+                    <span className="muted">{g.items.length}곳</span>
+                  </h2>
                 </li>,
                 ...g.items.map(card),
               ])
@@ -145,7 +218,12 @@ export default function App() {
           맛집은 예약이 되고 6명이 함께 앉을 수 있는 곳(개별실·단체석·6인 테이블·좌식)만 모았습니다. 점수·좌석·영업시간은 2026년 11월 타베로그 기준이고,
           점수가 보이지 않던 곳은 비워 두었습니다. 예약 전에 가게에 한 번 더 확인해 주세요.
         </p>
-        <p>✦ {SPOT_LABEL}은 식당이 아닌 볼거리로, 공식 사이트 등에서 시간·요금·휴무를 확인했습니다. 사진 촬영 에티켓이 적힌 곳은 꼭 지켜 주세요.</p>
+        <p>✦ 특이한 장소는 식당이 아닌 볼거리로, 공식 사이트 등에서 시간·요금·휴무를 확인했습니다. 사진 촬영 에티켓이 적힌 곳은 꼭 지켜 주세요.</p>
+        <p>
+          ♪ 라이브 바는 공식 사이트·스케줄 블로그에서 11/13~17 공연 일정을 확인했고, ◆ 주류 상점은 타베로그·공식 사이트, ¥ 면세점은 각 점포 공식 페이지나 관광청
+          면세점 사이트(TAXFREESHOPS.JP)에서 면세 대응을 확인했습니다. 2026년 11월부터 면세는 &lsquo;먼저 세금 내고 출국 때 환급&rsquo; 방식이에요 (면세점 카드에 안내).
+        </p>
+        <p>&lsquo;길찾기&rsquo;는 FOSSGIS의 무료 OSRM 도보 경로(OpenStreetMap 기반)를 지도에 그려 주고, 실패하면 구글 지도(전철·대중교통) 링크를 쓰세요.</p>
         <p>거리는 숙소에서의 직선거리, 도보 시간은 길이 1.3배 돌아간다고 보고 분속 80m로 계산한 추정치입니다 (도보 10분 ≈ 직선 615m).</p>
       </footer>
     </>
@@ -179,7 +257,7 @@ export default function App() {
       <main className="layout">
         {isDesktop && (
           <aside className="panel" aria-label="맛집 목록과 필터">
-            <h1 className="panel-title">숙소 근처 맛집 (6명 OK)<br /><span className="panel-sub">+ {SPOT_LABEL}</span></h1>
+            <h1 className="panel-title">숙소 근처 맛집 (6명 OK)<br /><span className="panel-sub">+ 볼거리 · 라이브 바 · 주류 상점 · 면세점</span></h1>
             <Filters value={filters} onChange={setFilters} areas={AREA_ORDER} genres={GENRE_ORDER} />
             {list}
           </aside>
@@ -193,8 +271,17 @@ export default function App() {
             bottomInset={isDesktop ? 0 : Math.min(sheetH, 420)}
             recenterKey={recenterKey}
             fitKey={fitKey}
+            route={route?.status === 'ok' && route.result ? { key: `${route.id}-${route.from}`, coords: route.result.coords } : null}
           />
           {mapButtons}
+          {route && (
+            <RoutePanel
+              route={route}
+              geoAvailable={'geolocation' in navigator}
+              onFrom={(from) => void startRoute(route.id, from)}
+              onClose={closeRoute}
+            />
+          )}
         </div>
         {!isDesktop && (
           <BottomSheet

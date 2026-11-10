@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet.markercluster'
-import type { Lodging, WithDistance } from '../types'
+import { isSpot, type Lodging, type PoiType, type WithDistance } from '../types'
+import { POI_META } from '../lib/labels'
 import { pickCards } from '../lib/collide'
 
 interface Props {
@@ -14,6 +15,8 @@ interface Props {
   bottomInset: number
   recenterKey: number
   fitKey: number
+  /** 지도에 그릴 도보 경로 (key가 바뀔 때만 화면을 경로에 맞춘다) */
+  route: { key: string; coords: [number, number][] } | null
 }
 
 /** 이 줌부터 묶음을 풀고 사진 카드 마커를 보여 준다 */
@@ -31,28 +34,32 @@ function starsHtml(score: number | null): string {
 }
 
 function cardIcon(p: WithDistance, selected: boolean): L.DivIcon {
-  const media =
-    p.type === 'spot'
-      ? `<span class="mk-img mk-spot-img"><span>${p.icon}</span></span><span class="mk-spot-kind">✦ ${esc(p.spotKind)}</span>`
-      : `<span class="mk-img"><img src="${esc(p.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('mk-img-fail');this.remove()"/></span>${starsHtml(p.tabelogScore)}`
-  const html = `<div class="mk ${p.type === 'spot' ? 'mk-spot' : ''} ${selected ? 'mk-sel' : ''}">
+  const img = (src: string) =>
+    `<img src="${esc(src)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('mk-img-fail');this.remove()"/>`
+  const media = isSpot(p)
+    ? `<span class="mk-img mk-spot-img">${p.image ? img(p.image) : `<span>${p.icon}</span>`}</span><span class="mk-spot-kind">${POI_META[p.type].mark} ${esc(p.spotKind)}</span>`
+    : `<span class="mk-img">${img(p.image)}</span>${starsHtml(p.tabelogScore)}`
+  const html = `<div class="mk ${isSpot(p) ? `mk-spot mk-${p.type}` : ''} ${selected ? 'mk-sel' : ''}">
     <span class="mk-name">${esc(p.nameKo)}</span>${media}
   </div>`
   return L.divIcon({ html, className: 'mk-wrap', iconSize: [112, 112], iconAnchor: [56, 112] })
 }
 
 function dotIcon(p: WithDistance, selected: boolean, bare = false): L.DivIcon {
-  const spot = p.type === 'spot'
+  const spot = isSpot(p)
   const label = bare ? '' : `<span>${esc(p.nameKo)}</span>`
-  const html = `<div class="dot ${spot ? 'dot-spot' : ''} ${selected ? 'dot-sel' : ''}"><i>${spot ? p.icon : ''}</i>${label}</div>`
+  const html = `<div class="dot ${spot ? `dot-spot dot-${p.type}` : ''} ${selected ? 'dot-sel' : ''}"><i>${spot ? p.icon : ''}</i>${label}</div>`
   return L.divIcon({ html, className: 'dot-wrap', iconSize: [24, 24], iconAnchor: [12, 12] })
 }
 
 function clusterIcon(c: L.MarkerCluster): L.DivIcon {
   const ms = c.getAllChildMarkers()
-  const spots = ms.filter((m) => (m.options as { spot?: boolean }).spot).length
+  const kinds = ms.map((m) => (m.options as { poi?: PoiType | null }).poi ?? null)
   const n = ms.length
-  const kind = spots === n ? 'cl-spot' : spots > 0 ? 'cl-mixed' : ''
+  const pois = kinds.filter(Boolean).length
+  const first = kinds[0]
+  // 모두 같은 종류면 그 색, 식당이 아닌 곳이 섞여 있으면 섞임 표시
+  const kind = pois === n && kinds.every((k) => k === first) ? `cl-spot cl-${first}` : pois > 0 ? 'cl-mixed' : ''
   const size = n >= 20 ? 52 : n >= 8 ? 46 : 40
   return L.divIcon({
     html: `<div class="cl ${kind}" style="width:${size}px;height:${size}px"><b>${n}</b></div>`,
@@ -107,10 +114,10 @@ function ClusterLayer({ places, selectedId, onSelect, zoom }: Pick<Props, 'place
         icon,
         title: p.nameKo,
         alt: p.nameKo,
-        zIndexOffset: sel ? 1000 : cards.has(p.id) ? 200 : p.type === 'spot' ? 100 : 0,
+        zIndexOffset: sel ? 1000 : cards.has(p.id) ? 200 : isSpot(p) ? 100 : 0,
         keyboard: true,
-        spot: p.type === 'spot',
-      } as L.MarkerOptions & { spot: boolean })
+        poi: isSpot(p) ? p.type : null,
+      } as L.MarkerOptions & { poi: PoiType | null })
       m.on('click', () => onSelect(p.id))
       markers.current.set(p.id, m)
       return m
@@ -122,7 +129,28 @@ function ClusterLayer({ places, selectedId, onSelect, zoom }: Pick<Props, 'place
   return null
 }
 
-function Controller({ lodging, places, selectedId, bottomInset, recenterKey, fitKey, onZoom }: Omit<Props, 'onSelect'> & { onZoom: (z: number) => void }) {
+/** 도보 경로 선 (흰 테두리 + 파란 선) 과 출발점. 새 경로가 오면 경로 전체가 보이게 맞춘다 */
+function RouteLayer({ route, bottomInset }: Pick<Props, 'route' | 'bottomInset'>) {
+  const map = useMap()
+  const key = route?.key
+  useEffect(() => {
+    if (!route) return
+    const casing = L.polyline(route.coords, { color: '#ffffff', weight: 9, opacity: 0.9, interactive: false })
+    const line = L.polyline(route.coords, { color: '#2563eb', weight: 5, opacity: 0.95, dashArray: '1 9', lineCap: 'round', interactive: false })
+    const solid = L.polyline(route.coords, { color: '#2563eb', weight: 5, opacity: 0.55, interactive: false })
+    const start = L.circleMarker(route.coords[0], { radius: 7, color: '#ffffff', weight: 3, fillColor: '#2563eb', fillOpacity: 1, interactive: false })
+    const grp = L.layerGroup([casing, solid, line, start]).addTo(map)
+    map.flyToBounds(L.latLngBounds(route.coords), { paddingTopLeft: [40, 150], paddingBottomRight: [40, 40 + bottomInset], maxZoom: 17, duration: 0.6 })
+    return () => {
+      grp.remove()
+    }
+    // 경로가 바뀔 때만 다시 그린다
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, map])
+  return null
+}
+
+function Controller({ lodging, places, selectedId, bottomInset, recenterKey, fitKey, onZoom }: Omit<Props, 'onSelect' | 'route'> & { onZoom: (z: number) => void }) {
   const map = useMap()
   useMapEvents({ zoomend: () => onZoom(map.getZoom()) })
 
@@ -179,6 +207,7 @@ export function MapView(props: Props) {
       />
       <Marker position={[lodging.lat, lodging.lng]} icon={lodgingIcon} zIndexOffset={2000} title="숙소" alt="숙소" keyboard={false} />
       <ClusterLayer places={places} selectedId={selectedId} onSelect={onSelect} zoom={zoom} />
+      <RouteLayer route={props.route} bottomInset={props.bottomInset} />
       <Controller {...props} onZoom={setZoom} />
     </MapContainer>
   )
