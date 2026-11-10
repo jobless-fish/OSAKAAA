@@ -1,11 +1,15 @@
 import type { Area, Genre, GroupFit, PlaceType } from '../types'
 
 export const AREA_LABEL: Record<Area, string> = {
-  umeda: '우메다·기타신치',
-  temma: '텐마·텐로쿠',
+  near: '숙소 도보권 (하나조노초·텐가차야)',
+  tennoji: '텐노지·신세카이·아베노',
+  south: '남쪽 (다마데·스미요시·니시타나베)',
+  southwest: '남서쪽 (기타카가야·스미노에)',
+  bay: '서쪽 (다이쇼·벤텐초·오사카항)',
   namba: '난바·닛폰바시',
   west: '호리에·니시구',
-  tennoji: '텐노지·신세카이',
+  umeda: '우메다·기타신치',
+  temma: '텐마·텐로쿠',
   east: '교바시·다니마치',
 }
 
@@ -21,6 +25,7 @@ export const TYPE_LABEL: Record<PlaceType, string> = {
   meal: '식사',
   snack: '간식·가벼운 한 끼',
   bar: '술·바',
+  spot: '특이한 장소',
 }
 
 export const GROUP_LABEL: Record<GroupFit, string> = {
@@ -28,3 +33,5 @@ export const GROUP_LABEL: Record<GroupFit, string> = {
   maybe: '6명 조건부',
   no: '6명 비추천',
 }
+
+export const SPOT_LABEL = '특이한 장소'

@@ -14,6 +14,8 @@
   --color-warning: #a16207;
   --color-destructive: #b91c1c;
   --star: #f59e0b;
+  --color-spot: #6d28d9;
+  --color-spot-soft: #f3e8ff;
   --radius: 12px;
   --shadow: 0 1px 2px rgb(15 23 42 / 0.08), 0 4px 12px rgb(15 23 42 / 0.08);
   --topbar-h: 56px;
@@ -229,3 +231,48 @@ button, select { font: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+
+/* 빠른 필터 칩 (도보 시간 · 특이한 장소) */
+.quick { display: flex; gap: 6px; margin-top: 6px; overflow-x: auto; scrollbar-width: none; }
+.quick::-webkit-scrollbar { display: none; }
+.qchip {
+  flex: 0 0 auto; min-height: 44px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--color-border);
+  background: var(--color-card); font-size: 14px; font-weight: 700; color: var(--color-foreground); cursor: pointer; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px; transition: background-color 150ms, color 150ms, border-color 150ms;
+}
+.qchip .qcount { font-size: 12px; font-weight: 800; color: var(--color-muted-foreground); }
+.qchip.on { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
+.qchip.on .qcount { color: rgb(255 255 255 / 0.85); }
+.qchip-spot { color: var(--color-spot); border-color: #d8b4fe; }
+.qchip-spot.on { background: var(--color-spot); border-color: var(--color-spot); }
+
+.chip-walk { color: var(--color-accent); }
+.chip-spot { color: var(--color-spot); }
+.panel-sub { font-size: 18px; color: var(--color-spot); }
+.group-spot h2 { border-bottom-color: var(--color-spot); color: var(--color-spot); }
+
+/* 특이한 장소 카드 */
+.card-spot { border-left: 4px solid var(--color-spot); }
+.card-spot.is-selected { border-color: var(--color-spot); border-left-width: 4px; box-shadow: 0 0 0 3px rgb(109 40 217 / 0.18), var(--shadow); }
+.spot-tile { display: grid; place-items: center; background: var(--color-spot-soft); font-size: 48px; }
+.spot-kind { font-size: 13px; font-weight: 800; color: var(--color-spot); }
+.spot-desc { font-size: 15px; line-height: 1.6; margin: 0 0 10px; }
+.btn-spot, .btn-spot:hover { background: var(--color-spot); color: #fff; border-color: var(--color-spot); }
+
+/* 지도: 특이한 장소 마커 (보라 테두리 + 아이콘) */
+.mk-spot { border: 2px solid var(--color-spot); }
+.mk-spot::after { border-top-color: var(--color-spot); }
+.mk-spot-img { display: grid; place-items: center; background: var(--color-spot-soft); font-size: 30px; }
+.mk-spot-kind { font-size: 10px; font-weight: 800; color: var(--color-spot); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dot-spot i { width: 24px; height: 24px; border-radius: 6px; transform: rotate(0); background: var(--color-spot-soft); border: 2px solid var(--color-spot); display: grid; place-items: center; font-size: 13px; font-style: normal; line-height: 1; }
+.dot-spot span { color: var(--color-spot); }
+.map-far .dot span { display: none; }
+
+/* 지도: 묶음(클러스터) 원 — 맛집은 주황, 장소만 있으면 보라, 섞이면 반반 */
+.cl-wrap { background: none; border: 0; }
+.cl {
+  border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 15px; cursor: pointer;
+  background: var(--color-primary); border: 3px solid #fff; box-shadow: 0 0 0 2px rgb(194 65 12 / 0.35), 0 2px 8px rgb(0 0 0 / 0.35);
+}
+.cl-spot { background: var(--color-spot); box-shadow: 0 0 0 2px rgb(109 40 217 / 0.35), 0 2px 8px rgb(0 0 0 / 0.35); }
+.cl-mixed { background: linear-gradient(135deg, var(--color-primary) 0 55%, var(--color-spot) 55% 100%); }

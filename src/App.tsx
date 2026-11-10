@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import raw from './data/restaurants.json'
-import type { Area, Dataset, Genre, WithDistance } from './types'
+import { scoreOf, type Area, type Dataset, type Genre, type Place, type WithDistance } from './types'
 import { haversineKm, walkMinutes } from './lib/geo'
 import { isOpenOn } from './lib/trip'
 import { MapView } from './components/MapView'
@@ -8,12 +8,13 @@ import { RestaurantCard } from './components/RestaurantCard'
 import { Filters } from './components/Filters'
 import { DEFAULT_FILTERS, type FilterState } from './lib/filters'
 import { groupByGenre, sortPlaces } from './lib/sort'
-import { GENRE_LABEL } from './lib/labels'
+import { GENRE_LABEL, SPOT_LABEL } from './lib/labels'
+import { QuickFilters } from './components/QuickFilters'
 import { SortControl } from './components/SortControl'
 import { BottomSheet, type Snap } from './components/BottomSheet'
 
 const data = raw as Dataset
-const AREA_ORDER: Area[] = ['umeda', 'temma', 'namba', 'west', 'tennoji', 'east']
+const AREA_ORDER: Area[] = ['near', 'tennoji', 'south', 'southwest', 'bay', 'namba', 'west', 'umeda', 'temma', 'east']
 const GENRE_ORDER: Genre[] = ['meat', 'noodle', 'japanese', 'asian', 'western']
 
 function useIsDesktop(): boolean {
@@ -41,9 +42,9 @@ export default function App() {
 
   const all: WithDistance[] = useMemo(
     () =>
-      data.restaurants.map((r) => {
+      ([...data.restaurants, ...data.spots] as Place[]).map((r) => {
         const km = haversineKm(lodging.lat, lodging.lng, r.lat, r.lng)
-        return { ...r, distanceKm: km, walkMin: walkMinutes(km) }
+        return { ...r, distanceKm: km, walkMin: walkMinutes(km) } as WithDistance
       }),
     [lodging],
   )
@@ -53,9 +54,10 @@ export default function App() {
     const list = all.filter((r) => {
       if (f.type !== 'all' && r.type !== f.type) return false
       if (f.area !== 'all' && r.area !== f.area) return false
-      if (f.genre !== 'all' && r.genre !== f.genre) return false
-      if (f.rating === 'scored' && r.tabelogScore == null) return false
-      if ((f.rating === '3.6' || f.rating === '3.8') && (r.tabelogScore ?? 0) < Number(f.rating)) return false
+      if (f.genre !== 'all' && (r.type === 'spot' || r.genre !== f.genre)) return false
+      if (f.rating === 'scored' && scoreOf(r) == null) return false
+      if ((f.rating === '3.6' || f.rating === '3.8') && (scoreOf(r) ?? 0) < Number(f.rating)) return false
+      if (f.walk !== 'all' && r.walkMin > Number(f.walk)) return false
       if (f.day !== 'all' && !isOpenOn(r.closedDates, f.day)) return false
       return true
     })
@@ -67,6 +69,16 @@ export default function App() {
 
   // 필터로 사라진 곳은 선택 해제된 것으로 본다
   const activeId = selectedId && places.some((p) => p.id === selectedId) ? selectedId : null
+
+  const quickCounts = useMemo(
+    () => ({
+      walk10: all.filter((p) => p.walkMin <= 10).length,
+      walk15: all.filter((p) => p.walkMin <= 15).length,
+      spots: all.filter((p) => p.type === 'spot').length,
+    }),
+    [all],
+  )
+  const foodCount = data.restaurants.length
 
   const select = useCallback(
     (id: string, fromMap: boolean) => {
@@ -87,6 +99,8 @@ export default function App() {
     [isDesktop, snap],
   )
 
+  const selectFromMap = useCallback((id: string) => select(id, true), [select])
+
   const card = (r: WithDistance) => (
     <li key={r.id}>
       <RestaurantCard r={r} lodging={lodging} selected={r.id === activeId} onSelect={(id) => select(id, false)} />
@@ -97,9 +111,17 @@ export default function App() {
     <>
       <div className="sort-bar">
         <SortControl value={filters.sort} onChange={(sort) => setFilters((f) => ({ ...f, sort }))} />
+        <QuickFilters
+          value={filters}
+          onChange={(v) => {
+            setFilters(v)
+            setFitKey((k) => k + 1) // 빠른 필터를 바꾸면 남은 곳이 모두 보이게 지도를 맞춘다
+          }}
+          counts={quickCounts}
+        />
       </div>
       <p className="count" aria-live="polite">
-        {places.length}곳 표시 중 <span className="muted">/ 전체 {all.length}곳</span>
+        {places.length}곳 표시 중 <span className="muted">/ 맛집 {foodCount} · {SPOT_LABEL} {all.length - foodCount}</span>
       </p>
       {places.length === 0 ? (
         <div className="empty">
@@ -110,8 +132,8 @@ export default function App() {
         <ul className="list">
           {filters.sort === 'category'
             ? groupByGenre(places, GENRE_ORDER).flatMap((g) => [
-                <li key={`h-${g.genre}`} className="group-header">
-                  <h2>{GENRE_LABEL[g.genre]} <span className="muted">{g.items.length}곳</span></h2>
+                <li key={`h-${g.key}`} className={`group-header ${g.key === 'spot' ? 'group-spot' : ''}`}>
+                  <h2>{g.key === 'spot' ? `✦ ${SPOT_LABEL}` : GENRE_LABEL[g.key]} <span className="muted">{g.items.length}곳</span></h2>
                 </li>,
                 ...g.items.map(card),
               ])
@@ -120,10 +142,11 @@ export default function App() {
       )}
       <footer className="notes">
         <p>
-          6명이 함께 앉을 수 있는 곳(개별실·단체석·6인 테이블)만 모았습니다. 점수·좌석·영업시간은 2026년 11월 타베로그 기준이고,
+          맛집은 예약이 되고 6명이 함께 앉을 수 있는 곳(개별실·단체석·6인 테이블·좌식)만 모았습니다. 점수·좌석·영업시간은 2026년 11월 타베로그 기준이고,
           점수가 보이지 않던 곳은 비워 두었습니다. 예약 전에 가게에 한 번 더 확인해 주세요.
         </p>
-        <p>거리는 숙소에서의 직선거리, 도보 시간은 길이 1.3배 돌아간다고 보고 분속 80m로 계산한 추정치입니다.</p>
+        <p>✦ {SPOT_LABEL}은 식당이 아닌 볼거리로, 공식 사이트 등에서 시간·요금·휴무를 확인했습니다. 사진 촬영 에티켓이 적힌 곳은 꼭 지켜 주세요.</p>
+        <p>거리는 숙소에서의 직선거리, 도보 시간은 길이 1.3배 돌아간다고 보고 분속 80m로 계산한 추정치입니다 (도보 10분 ≈ 직선 615m).</p>
       </footer>
     </>
   )
@@ -156,7 +179,7 @@ export default function App() {
       <main className="layout">
         {isDesktop && (
           <aside className="panel" aria-label="맛집 목록과 필터">
-            <h1 className="panel-title">숙소 근처 맛집<br />(6명 OK)</h1>
+            <h1 className="panel-title">숙소 근처 맛집 (6명 OK)<br /><span className="panel-sub">+ {SPOT_LABEL}</span></h1>
             <Filters value={filters} onChange={setFilters} areas={AREA_ORDER} genres={GENRE_ORDER} />
             {list}
           </aside>
@@ -166,7 +189,7 @@ export default function App() {
             lodging={lodging}
             places={places}
             selectedId={activeId}
-            onSelect={(id) => select(id, true)}
+            onSelect={selectFromMap}
             bottomInset={isDesktop ? 0 : Math.min(sheetH, 420)}
             recenterKey={recenterKey}
             fitKey={fitKey}
@@ -180,7 +203,7 @@ export default function App() {
             onVisibleHeight={setSheetH}
             header={
               <div className="sheet-bar">
-                <h1 className="sheet-title">숙소 근처 맛집 (6명 OK) <span className="muted">{places.length}곳</span></h1>
+                <h1 className="sheet-title">6명 OK 맛집·장소 <span className="muted">{places.length}곳</span></h1>
                 <button
                   type="button"
                   className={`btn btn-sm ${showFilters ? 'btn-primary' : ''}`}
