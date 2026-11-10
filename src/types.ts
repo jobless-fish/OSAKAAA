@@ -1,5 +1,5 @@
 export type Genre = 'meat' | 'noodle' | 'japanese' | 'asian' | 'western'
-export type Area = 'umeda' | 'temma' | 'namba' | 'west' | 'tennoji' | 'east' | 'suburb'
+export type Area = 'umeda' | 'temma' | 'namba' | 'west' | 'tennoji' | 'east'
 export type PlaceType = 'meal' | 'snack' | 'bar'
 export type GroupFit = 'ok' | 'maybe' | 'no'
 
@@ -7,7 +7,6 @@ export interface Restaurant {
   id: string
   nameKo: string
   nameJa: string
-  userFound: boolean
   genre: Genre
   genreText: string
   type: PlaceType
@@ -25,8 +24,6 @@ export interface Restaurant {
   tabelogUrl: string
   courseUrl: string | null
   image: string
-  sourceLabel: string
-  sourceUrl: string | null
   address: string
   lat: number
   lng: number

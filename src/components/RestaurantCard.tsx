@@ -38,7 +38,6 @@ export function RestaurantCard({ r, lodging, selected, onSelect }: Props) {
           </p>
           <div className="chips">
             <span className={`chip chip-${r.group}`}>{GROUP_LABEL[r.group]}</span>
-            {r.userFound && <span className="chip chip-user">일행이 찾은 곳</span>}
             {closed.length > 0 && <span className="chip chip-closed">휴무 {closed.join(', ')}</span>}
             {r.closedNote && <span className="chip chip-warn">영업일 확인 필요</span>}
           </div>
@@ -55,13 +54,11 @@ export function RestaurantCard({ r, lodging, selected, onSelect }: Props) {
             <dt>좌석</dt><dd>{r.seats}</dd>
             <dt>6명</dt><dd>{GROUP_LABEL[r.group]} — {r.groupNote}</dd>
             <dt>주소</dt><dd lang="ja">{r.address}</dd>
-            <dt>출처</dt><dd>{r.sourceLabel}</dd>
           </dl>
           <div className="links">
             <a className="btn btn-primary" href={r.tabelogUrl} target="_blank" rel="noopener noreferrer">타베로그에서 보기</a>
             {r.courseUrl && <a className="btn" href={r.courseUrl} target="_blank" rel="noopener noreferrer">코스 보기</a>}
             <a className="btn" href={directions} target="_blank" rel="noopener noreferrer">숙소에서 길찾기</a>
-            {r.sourceUrl && <a className="btn" href={r.sourceUrl} target="_blank" rel="noopener noreferrer">소개 게시물</a>}
           </div>
           <p className="credit">사진·점수: <a href={r.tabelogUrl} target="_blank" rel="noopener noreferrer">타베로그</a> · 거리·시간은 직선거리 기준 추정치</p>
         </div>

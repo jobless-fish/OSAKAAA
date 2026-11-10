@@ -24,7 +24,7 @@ function starsHtml(score: number | null): string {
 }
 
 function cardIcon(r: WithDistance, selected: boolean): L.DivIcon {
-  const html = `<div class="mk ${selected ? 'mk-sel' : ''} ${r.userFound ? 'mk-user' : ''}">
+  const html = `<div class="mk ${selected ? 'mk-sel' : ''}">
     <span class="mk-name">${esc(r.nameKo)}</span>
     <span class="mk-img"><img src="${esc(r.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('mk-img-fail');this.remove()"/></span>
     ${starsHtml(r.tabelogScore)}
@@ -33,7 +33,7 @@ function cardIcon(r: WithDistance, selected: boolean): L.DivIcon {
 }
 
 function dotIcon(r: WithDistance, selected: boolean): L.DivIcon {
-  const html = `<div class="dot ${selected ? 'dot-sel' : ''} ${r.userFound ? 'dot-user' : ''}"><i></i><span>${esc(r.nameKo)}</span></div>`
+  const html = `<div class="dot ${selected ? 'dot-sel' : ''}"><i></i><span>${esc(r.nameKo)}</span></div>`
   return L.divIcon({ html, className: 'dot-wrap', iconSize: [24, 24], iconAnchor: [12, 12] })
 }
 
@@ -65,10 +65,7 @@ function Controller({ lodging, places, selectedId, bottomInset, recenterKey, fit
 
   useEffect(() => {
     if (fitKey === 0 || places.length === 0) return
-    // 교외(이바라키)까지 넣으면 너무 멀어지므로, 시내 장소가 있으면 시내만 맞춘다
-    const city = places.filter((p) => p.area !== 'suburb')
-    const target = city.length > 0 ? city : places
-    const b = L.latLngBounds(target.map((p) => [p.lat, p.lng] as [number, number]))
+    const b = L.latLngBounds(places.map((p) => [p.lat, p.lng] as [number, number]))
     b.extend([lodging.lat, lodging.lng])
     map.flyToBounds(b, { paddingTopLeft: [40, 60], paddingBottomRight: [40, 40 + bottomInset], duration: 0.6, maxZoom: 15 })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,7 +112,7 @@ export function MapView(props: Props) {
           icon={icons.get(p.id)!}
           title={p.nameKo}
           alt={p.nameKo}
-          zIndexOffset={p.id === selectedId ? 1000 : p.userFound ? 100 : 0}
+          zIndexOffset={p.id === selectedId ? 1000 : 0}
           eventHandlers={{ click: () => onSelect(p.id) }}
         />
       ))}

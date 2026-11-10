@@ -7,15 +7,14 @@ export const AREA_LABEL: Record<Area, string> = {
   west: '호리에·니시구',
   tennoji: '텐노지·신세카이',
   east: '교바시·다니마치',
-  suburb: '이바라키(교외)',
 }
 
 export const GENRE_LABEL: Record<Genre, string> = {
   meat: '고기·야키니쿠',
   noodle: '라멘·면',
-  japanese: '일식·정식',
-  asian: '한식·중식',
-  western: '양식·바',
+  japanese: '일식·스시·가이세키',
+  asian: '한식·중식·카레',
+  western: '양식·카페·바',
 }
 
 export const TYPE_LABEL: Record<PlaceType, string> = {

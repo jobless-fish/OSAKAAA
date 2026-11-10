@@ -7,10 +7,13 @@ import { MapView } from './components/MapView'
 import { RestaurantCard } from './components/RestaurantCard'
 import { Filters } from './components/Filters'
 import { DEFAULT_FILTERS, type FilterState } from './lib/filters'
+import { groupByGenre, sortPlaces } from './lib/sort'
+import { GENRE_LABEL } from './lib/labels'
+import { SortControl } from './components/SortControl'
 import { BottomSheet, type Snap } from './components/BottomSheet'
 
 const data = raw as Dataset
-const AREA_ORDER: Area[] = ['umeda', 'temma', 'namba', 'west', 'tennoji', 'east', 'suburb']
+const AREA_ORDER: Area[] = ['umeda', 'temma', 'namba', 'west', 'tennoji', 'east']
 const GENRE_ORDER: Genre[] = ['meat', 'noodle', 'japanese', 'asian', 'western']
 
 function useIsDesktop(): boolean {
@@ -52,17 +55,11 @@ export default function App() {
       if (f.area !== 'all' && r.area !== f.area) return false
       if (f.genre !== 'all' && r.genre !== f.genre) return false
       if (f.rating === 'scored' && r.tabelogScore == null) return false
-      if ((f.rating === '3.4' || f.rating === '3.5') && (r.tabelogScore ?? 0) < Number(f.rating)) return false
+      if ((f.rating === '3.6' || f.rating === '3.8') && (r.tabelogScore ?? 0) < Number(f.rating)) return false
       if (f.day !== 'all' && !isOpenOn(r.closedDates, f.day)) return false
-      if (f.groupOnly && r.group !== 'ok') return false
-      if (f.userOnly && !r.userFound) return false
       return true
     })
-    const sorted = [...list]
-    if (f.sort === 'distance') sorted.sort((a, b) => a.distanceKm - b.distanceKm)
-    else if (f.sort === 'score') sorted.sort((a, b) => (b.tabelogScore ?? -1) - (a.tabelogScore ?? -1) || a.distanceKm - b.distanceKm)
-    else sorted.sort((a, b) => a.nameKo.localeCompare(b.nameKo, 'ko'))
-    return sorted
+    return sortPlaces(list, f.sort, GENRE_ORDER)
   }, [all, filters])
 
   const activeFilterCount =
@@ -90,8 +87,17 @@ export default function App() {
     [isDesktop, snap],
   )
 
+  const card = (r: WithDistance) => (
+    <li key={r.id}>
+      <RestaurantCard r={r} lodging={lodging} selected={r.id === activeId} onSelect={(id) => select(id, false)} />
+    </li>
+  )
+
   const list = (
     <>
+      <div className="sort-bar">
+        <SortControl value={filters.sort} onChange={(sort) => setFilters((f) => ({ ...f, sort }))} />
+      </div>
       <p className="count" aria-live="polite">
         {places.length}곳 표시 중 <span className="muted">/ 전체 {all.length}곳</span>
       </p>
@@ -102,17 +108,20 @@ export default function App() {
         </div>
       ) : (
         <ul className="list">
-          {places.map((r) => (
-            <li key={r.id}>
-              <RestaurantCard r={r} lodging={lodging} selected={r.id === activeId} onSelect={(id) => select(id, false)} />
-            </li>
-          ))}
+          {filters.sort === 'category'
+            ? groupByGenre(places, GENRE_ORDER).flatMap((g) => [
+                <li key={`h-${g.genre}`} className="group-header">
+                  <h2>{GENRE_LABEL[g.genre]} <span className="muted">{g.items.length}곳</span></h2>
+                </li>,
+                ...g.items.map(card),
+              ])
+            : places.map(card)}
         </ul>
       )}
       <footer className="notes">
         <p>
-          인스타그램 <a href="https://www.instagram.com/aito_osaka/" target="_blank" rel="noopener noreferrer">@aito_osaka</a>와
-          같은 크리에이터의 Lemon8에서 확인한 25곳입니다. 점수·영업시간은 2026년 11월 타베로그 기준이고, 점수가 보이지 않던 곳은 비워 두었습니다.
+          6명이 함께 앉을 수 있는 곳(개별실·단체석·6인 테이블)만 모았습니다. 점수·좌석·영업시간은 2026년 11월 타베로그 기준이고,
+          점수가 보이지 않던 곳은 비워 두었습니다. 예약 전에 가게에 한 번 더 확인해 주세요.
         </p>
         <p>거리는 숙소에서의 직선거리, 도보 시간은 길이 1.3배 돌아간다고 보고 분속 80m로 계산한 추정치입니다.</p>
       </footer>
@@ -147,7 +156,7 @@ export default function App() {
       <main className="layout">
         {isDesktop && (
           <aside className="panel" aria-label="맛집 목록과 필터">
-            <h1 className="panel-title">숙소 근처 맛집<br />aito_osaka 추천</h1>
+            <h1 className="panel-title">숙소 근처 맛집<br />(6명 OK)</h1>
             <Filters value={filters} onChange={setFilters} areas={AREA_ORDER} genres={GENRE_ORDER} />
             {list}
           </aside>
@@ -171,7 +180,7 @@ export default function App() {
             onVisibleHeight={setSheetH}
             header={
               <div className="sheet-bar">
-                <h1 className="sheet-title">숙소 근처 맛집 <span className="muted">{places.length}곳</span></h1>
+                <h1 className="sheet-title">숙소 근처 맛집 (6명 OK) <span className="muted">{places.length}곳</span></h1>
                 <button
                   type="button"
                   className={`btn btn-sm ${showFilters ? 'btn-primary' : ''}`}

@@ -1,7 +1,8 @@
 import type { Area, Genre, PlaceType } from '../types'
 
-export type SortKey = 'distance' | 'score' | 'name'
-export type RatingKey = 'all' | 'scored' | '3.4' | '3.5'
+/** 별점순(기본) · 거리순 · 음식 카테고리별 */
+export type SortKey = 'score' | 'distance' | 'category'
+export type RatingKey = 'all' | 'scored' | '3.6' | '3.8'
 
 export interface FilterState {
   type: PlaceType | 'all'
@@ -9,8 +10,6 @@ export interface FilterState {
   genre: Genre | 'all'
   rating: RatingKey
   day: string
-  groupOnly: boolean
-  userOnly: boolean
   sort: SortKey
 }
 
@@ -20,8 +19,11 @@ export const DEFAULT_FILTERS: FilterState = {
   genre: 'all',
   rating: 'all',
   day: 'all',
-  groupOnly: false,
-  userOnly: false,
-  sort: 'distance',
+  sort: 'score',
 }
 
+export const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: 'score', label: '별점순' },
+  { key: 'distance', label: '거리순' },
+  { key: 'category', label: '음식 카테고리별' },
+]

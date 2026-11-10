@@ -10,11 +10,10 @@ const ds = data as Dataset
 const BOX: Record<string, [number, number, number, number]> = {
   umeda: [34.69, 34.71, 135.49, 135.51],
   temma: [34.7, 34.715, 135.5, 135.52],
-  namba: [34.66, 34.67, 135.49, 135.51],
+  namba: [34.655, 34.673, 135.485, 135.51],
   west: [34.665, 34.69, 135.48, 135.5],
-  tennoji: [34.64, 34.656, 135.5, 135.52],
+  tennoji: [34.64, 34.656, 135.5, 135.53],
   east: [34.675, 34.705, 135.51, 135.54],
-  suburb: [34.8, 34.83, 135.55, 135.59],
 }
 
 describe('geo', () => {
@@ -30,9 +29,17 @@ describe('geo', () => {
 })
 
 describe('data', () => {
-  it('25곳, id 중복 없음', () => {
-    expect(ds.restaurants).toHaveLength(25)
-    expect(new Set(ds.restaurants.map((r) => r.id)).size).toBe(25)
+  it('20곳, id 중복 없음', () => {
+    expect(ds.restaurants).toHaveLength(20)
+    expect(new Set(ds.restaurants.map((r) => r.id)).size).toBe(20)
+  })
+  it('모두 6명 OK, 출처 표기 필드 없음', () => {
+    for (const r of ds.restaurants) {
+      expect(r.group, r.id).toBe('ok')
+      expect(r, r.id).not.toHaveProperty('sourceUrl')
+      expect(r, r.id).not.toHaveProperty('sourceLabel')
+      expect(r, r.id).not.toHaveProperty('userFound')
+    }
   })
   it('모든 좌표가 해당 지역 범위 안', () => {
     for (const r of ds.restaurants) {

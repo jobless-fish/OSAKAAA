@@ -1,5 +1,5 @@
 import type { Area, Genre, PlaceType } from '../types'
-import type { FilterState, RatingKey, SortKey } from '../lib/filters'
+import type { FilterState, RatingKey } from '../lib/filters'
 import { AREA_LABEL, GENRE_LABEL, TYPE_LABEL } from '../lib/labels'
 import { TRIP_DAYS } from '../lib/trip'
 
@@ -46,8 +46,8 @@ export function Filters({ value, onChange, areas, genres }: Props) {
         <select value={value.rating} onChange={(e) => set('rating', e.target.value as RatingKey)}>
           <option value="all">전체</option>
           <option value="scored">점수 확인된 곳</option>
-          <option value="3.4">3.4 이상</option>
-          <option value="3.5">3.5 이상</option>
+          <option value="3.6">3.6 이상</option>
+          <option value="3.8">3.8 이상</option>
         </select>
       </label>
       <label className="field">
@@ -59,22 +59,6 @@ export function Filters({ value, onChange, areas, genres }: Props) {
           ))}
         </select>
       </label>
-      <label className="field">
-        <span>정렬</span>
-        <select value={value.sort} onChange={(e) => set('sort', e.target.value as SortKey)}>
-          <option value="distance">숙소에서 가까운 순</option>
-          <option value="score">타베로그 점수 순</option>
-          <option value="name">이름 순</option>
-        </select>
-      </label>
-      <div className="toggles">
-        <button type="button" className={`toggle ${value.groupOnly ? 'on' : ''}`} aria-pressed={value.groupOnly} onClick={() => set('groupOnly', !value.groupOnly)}>
-          6명 OK만
-        </button>
-        <button type="button" className={`toggle ${value.userOnly ? 'on' : ''}`} aria-pressed={value.userOnly} onClick={() => set('userOnly', !value.userOnly)}>
-          일행이 찾은 4곳
-        </button>
-      </div>
     </div>
   )
 }

@@ -79,13 +79,25 @@ button, select { font: inherit; color: inherit; }
   background: var(--color-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23475569' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
   appearance: none; color: var(--color-foreground); font-size: 16px; cursor: pointer;
 }
-.toggles { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; }
-.toggle {
-  min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--color-border);
-  background: var(--color-card); cursor: pointer; transition: background-color 150ms, color 150ms;
-}
-.toggle.on { background: var(--color-accent); color: var(--color-on-accent); border-color: var(--color-accent); }
 
+ /* 정렬 세그먼트 — 목록 위에 붙어 있어 스크롤해도 보인다 */
+.sort-bar {
+  position: sticky; top: 0; z-index: 5; margin: 0 -4px 8px; padding: 6px 4px 8px;
+  background: var(--color-background);
+}
+.seg {
+  display: grid; grid-template-columns: 1fr 1fr 1.45fr; gap: 4px; padding: 4px;
+  background: #fde6d6; border-radius: 14px; border: 1px solid var(--color-border);
+}
+.seg-btn {
+  min-height: var(--tap); padding: 0 8px; border: 0; border-radius: 10px; background: transparent;
+  font-size: 15px; font-weight: 700; color: var(--color-foreground); cursor: pointer; white-space: nowrap;
+  transition: background-color 150ms, color 150ms, box-shadow 150ms;
+}
+.seg-btn:hover { background: rgb(255 255 255 / 0.6); }
+.seg-btn.on { background: var(--color-primary); color: var(--color-on-primary); box-shadow: 0 1px 3px rgb(15 23 42 / 0.25); }
+.group-header h2 { font-size: 16px; font-weight: 800; margin: 10px 2px 0; padding-bottom: 4px; border-bottom: 2px solid var(--color-primary); }
+.group-header:first-child h2 { margin-top: 0; }
 .count { font-size: 14px; font-weight: 700; margin: 4px 2px 10px; }
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .empty { padding: 24px 8px; text-align: center; display: grid; gap: 12px; justify-items: center; }
@@ -118,7 +130,6 @@ button, select { font: inherit; color: inherit; }
 .chip-ok { color: var(--color-success); }
 .chip-maybe { color: var(--color-warning); }
 .chip-no { color: var(--color-muted-foreground); }
-.chip-user { color: var(--color-primary); }
 .chip-closed { color: #fff; background: var(--color-destructive); border-color: var(--color-destructive); }
 .chip-warn { color: var(--color-destructive); }
 
@@ -170,13 +181,11 @@ button, select { font: inherit; color: inherit; }
 .mk-track { position: relative; color: #e2e8f0; line-height: 1; }
 .mk-fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; white-space: nowrap; color: var(--star); }
 .mk-noscore { font-size: 10px; color: var(--color-muted-foreground); }
-.mk-user { box-shadow: 0 0 0 2px var(--color-primary), 0 2px 6px rgb(0 0 0 / 0.3); }
 .mk-sel { box-shadow: 0 0 0 3px var(--color-accent), 0 4px 12px rgb(0 0 0 / 0.35); transform: scale(1.08); transform-origin: bottom center; }
 .mk-sel::after { border-top-color: var(--color-accent); }
 
 .dot { position: relative; width: 24px; height: 24px; display: grid; place-items: center; cursor: pointer; }
 .dot i { width: 16px; height: 16px; border-radius: 50%; background: var(--color-primary); border: 3px solid #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.4); }
-.dot-user i { background: var(--color-accent); }
 .dot span {
   position: absolute; left: 22px; top: 2px; white-space: nowrap; font-size: 12px; font-weight: 700;
   background: rgb(255 255 255 / 0.92); padding: 0 5px; border-radius: 4px; color: var(--color-foreground); pointer-events: none;
