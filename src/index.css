@@ -316,3 +316,105 @@ button, select { font: inherit; color: inherit; }
 .route-note { margin: 4px 0 0; font-size: 13px; color: var(--color-warning); }
 .route-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .route-credit { margin: 6px 0 0; font-size: 11px; color: var(--color-muted-foreground); }
+
+/* ---------- 메인 화면 ---------- */
+.brand-btn { background: none; border: 0; color: inherit; padding: 0; cursor: pointer; text-align: left; min-height: 44px; }
+.brand > span:last-child { display: flex; flex-direction: column; }
+.home { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.home-inner { max-width: 760px; margin: 0 auto; padding: 16px calc(16px + var(--safe-right)) calc(32px + var(--safe-bottom)) calc(16px + var(--safe-left)); display: grid; gap: 14px; }
+.hero {
+  background: var(--color-card); border-radius: 18px; box-shadow: var(--shadow); padding: 22px 18px 18px;
+  border-top: 6px solid var(--color-primary); display: grid; gap: 8px;
+}
+.hero-kicker { font-size: 13px; font-weight: 800; color: var(--color-primary); letter-spacing: 0.04em; }
+.hero-title { font-size: 30px; line-height: 1.15; font-weight: 900; margin: 0; }
+.hero-addr { font-size: 14px; color: var(--color-muted-foreground); }
+.hero-cta { min-height: 60px; font-size: 19px; gap: 8px; border-radius: 14px; margin-top: 6px; box-shadow: 0 4px 14px rgb(194 65 12 / 0.35); }
+.hero-sub { font-size: 13px; color: var(--color-muted-foreground); text-align: center; }
+.hero-quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.hq {
+  min-height: 48px; border-radius: 12px; border: 1px solid var(--color-border); background: var(--color-muted);
+  font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 0 2px; white-space: nowrap; letter-spacing: -0.02em;
+}
+.hq b { font-size: 12px; min-width: 22px; height: 22px; border-radius: 6px; display: inline-grid; place-items: center; color: #fff; background: var(--color-spot); }
+.hq:nth-child(1) b { background: #1d4ed8; }
+.hq:nth-child(2) b { background: #15803d; }
+.hq:nth-child(3) b { background: #a16207; }
+.hq:nth-child(4) b { background: #0f766e; }
+.topic { background: var(--color-card); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+.topic summary {
+  list-style: none; display: grid; grid-template-columns: 48px 1fr 24px; gap: 12px; align-items: center;
+  padding: 14px 16px; cursor: pointer; min-height: 72px;
+}
+.topic summary::-webkit-details-marker { display: none; }
+.topic-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--color-muted); display: grid; place-items: center; font-size: 26px; }
+.topic-head { display: grid; gap: 2px; min-width: 0; }
+.topic-head h2 { margin: 0; font-size: 19px; font-weight: 800; }
+.topic-lead { font-size: 14px; color: var(--color-muted-foreground); }
+.topic-caret { width: 12px; height: 12px; border-right: 3px solid var(--color-muted-foreground); border-bottom: 3px solid var(--color-muted-foreground); transform: rotate(45deg); justify-self: center; transition: transform 200ms; }
+.topic details[open] .topic-caret { transform: rotate(225deg); }
+.topic-body { padding: 0 16px 16px; display: grid; gap: 12px; border-top: 1px solid var(--color-border); padding-top: 12px; }
+.topic-block h3 { font-size: 15px; font-weight: 800; color: var(--color-primary); margin: 0 0 4px; }
+.topic-block ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 15px; line-height: 1.55; }
+.topic-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.lm-links h2 { font-size: 15px; font-weight: 800; margin: 4px 2px 8px; color: var(--color-muted-foreground); }
+.lm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.lm-link {
+  display: flex; align-items: center; gap: 10px; text-align: left; min-height: 64px; padding: 10px 12px; border-radius: 14px;
+  border: 1px solid #fecaca; background: #fff; cursor: pointer; box-shadow: var(--shadow);
+}
+.lm-link span:last-child { display: grid; }
+.lm-link b { font-size: 15px; }
+.lm-link small { font-size: 12px; color: var(--color-muted-foreground); }
+.lm-link-star { color: #b91c1c; font-size: 22px; }
+.home-foot { font-size: 12px; color: var(--color-muted-foreground); text-align: center; }
+@media (min-width: 900px) {
+  .home-inner { padding-top: 28px; }
+  .hero { padding: 32px 32px 24px; }
+  .hero-title { font-size: 40px; }
+}
+@media (max-width: 380px) {
+  .hero-quick { grid-template-columns: repeat(2, 1fr); }
+  .lm-grid, .topic-actions { grid-template-columns: 1fr; }
+}
+
+/* ---------- 새 종류 색: 대표 명소(빨강) · 편의점(파랑) · 약국(초록) · 돈키호테(노랑) · 할인·잡화점(남보라) ---------- */
+.card-landmark, .mk-landmark, .dot-landmark, .cl-landmark, .qchip-landmark, .group-landmark { --color-spot: #b91c1c; --color-spot-soft: #fee2e2; }
+.card-conv, .mk-conv, .dot-conv, .cl-conv, .qchip-conv, .group-conv, .tag-conv { --color-spot: #1d4ed8; --color-spot-soft: #dbeafe; }
+.card-pharmacy, .mk-pharmacy, .dot-pharmacy, .cl-pharmacy, .qchip-pharmacy, .group-pharmacy, .tag-pharmacy { --color-spot: #15803d; --color-spot-soft: #dcfce7; }
+.card-donki, .mk-donki, .dot-donki, .cl-donki, .qchip-donki, .group-donki, .tag-donki { --color-spot: #a16207; --color-spot-soft: #fef9c3; }
+.card-discount, .mk-discount, .dot-discount, .cl-discount, .qchip-discount, .group-discount, .tag-discount { --color-spot: #4338ca; --color-spot-soft: #e0e7ff; }
+.tag-taxfree { --color-spot: #0f766e; --color-spot-soft: #ccfbf1; }
+.qchip-landmark { border-color: #fca5a5; }
+.qchip-conv { border-color: #93c5fd; }
+.qchip-pharmacy { border-color: #86efac; }
+.qchip-donki { border-color: #fde047; }
+.qchip-discount { border-color: #a5b4fc; }
+.dot-conv i, .dot-pharmacy i { border-radius: 50%; width: 20px; height: 20px; font-size: 11px; }
+.tag { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 999px; font-size: 11px; color: var(--color-spot); background: var(--color-spot-soft); border: 1px solid var(--color-spot); }
+.card-landmark { border-left-width: 6px; }
+.card-landmark .spot-tile { font-size: 56px; }
+
+/* 대표 명소 안내 */
+.guide { display: grid; gap: 10px; margin: 0 0 12px; }
+.guide-sec { padding: 10px 12px; border-radius: 10px; background: #fff7f7; border: 1px solid #fecaca; }
+.guide-sec h4 { margin: 0 0 4px; font-size: 14px; font-weight: 800; color: #b91c1c; }
+.guide-sec ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; font-size: 14px; line-height: 1.55; }
+
+/* 지도: 대표 명소 마커 (크게, 줌과 상관없이) */
+.lm-wrap { background: none; border: 0; }
+.lm {
+  position: absolute; left: 0; right: 0; bottom: 12px; margin: 0 auto; width: max-content; max-width: 280px;
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; cursor: pointer;
+  background: #b91c1c; color: #fff; border: 3px solid #fff; box-shadow: 0 0 0 3px rgb(185 28 28 / 0.35), 0 6px 16px rgb(0 0 0 / 0.35);
+  animation: lm-pop 1.6s ease-out 2;
+}
+.lm-badge { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 24px; flex: none; }
+.lm-text { display: grid; line-height: 1.2; min-width: 0; }
+.lm-text b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lm-text small { font-size: 11px; font-weight: 700; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lm-tip { position: absolute; left: 50%; bottom: 0; margin-left: -8px; border: 8px solid transparent; border-bottom: 0; border-top: 14px solid #b91c1c; }
+.lm-sel { box-shadow: 0 0 0 4px var(--color-accent), 0 8px 20px rgb(0 0 0 / 0.4); }
+@keyframes lm-pop { 0% { transform: scale(1); } 15% { transform: scale(1.12); } 30% { transform: scale(1); } }
+.fab-landmark { color: #b91c1c; border: 2px solid #fca5a5; }
+.fab-star { font-size: 18px; line-height: 1; }

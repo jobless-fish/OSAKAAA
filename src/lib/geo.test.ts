@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import data from '../data/restaurants.json'
-import type { Dataset } from '../types'
+import { hasType, type Dataset, type PoiType } from '../types'
 import { haversineKm, walkMinutes } from './geo'
 import { TRIP_DAYS } from './trip'
 
@@ -10,10 +10,12 @@ const ds = data as Dataset
 const BOX: Partial<Record<string, [number, number, number, number]>> = {
   umeda: [34.69, 34.71, 135.49, 135.51],
   temma: [34.7, 34.715, 135.5, 135.52],
-  namba: [34.655, 34.673, 135.485, 135.51],
+  namba: [34.655, 34.676, 135.485, 135.51],
   west: [34.665, 34.69, 135.48, 135.5],
-  tennoji: [34.635, 34.66, 135.495, 135.53],
+  tennoji: [34.635, 34.665, 135.495, 135.53],
   east: [34.675, 34.705, 135.51, 135.54],
+  usj: [34.66, 34.675, 135.425, 135.445],
+  kyoto: [34.96, 34.975, 135.765, 135.78],
 }
 /** 지역별 숙소에서의 최대 직선거리(km) */
 const RADIUS: Partial<Record<string, number>> = { near: 1.25, south: 5.5, southwest: 5.0, bay: 5.3 }
@@ -100,15 +102,44 @@ describe('data', () => {
       expect(s.fee, s.id).toBeTruthy()
     }
   })
-  it('식당이 아닌 장소: 설명·시간·요금·안내 링크가 있고 대부분 숙소 3km 이내', () => {
+  it('식당이 아닌 장소: 설명·시간·요금·안내 링크가 있고, 근처용 장소는 대부분 숙소 3km 이내', () => {
     for (const s of ds.spots) {
-      expect(['spot', 'liquor', 'taxfree', 'livebar']).toContain(s.type)
+      expect(['spot', 'liquor', 'taxfree', 'livebar', 'conv', 'pharmacy', 'donki', 'discount', 'landmark']).toContain(s.type)
       expect(s.description.length, s.id).toBeGreaterThan(20)
       expect(s.hours, s.id).toBeTruthy()
       expect(s.fee, s.id).toBeTruthy()
       expect(s.infoUrl, s.id).toMatch(/^https?:\/\//)
     }
-    expect(ds.spots.filter((s) => km(s) <= 3.2).length).toBeGreaterThanOrEqual(ds.spots.length - 2)
+    const local = ds.spots.filter((s) => !['donki', 'discount', 'landmark'].includes(s.type))
+    expect(local.filter((s) => km(s) <= 3.2).length).toBeGreaterThanOrEqual(local.length - 2)
+  })
+  const of = (t: PoiType) => ds.spots.filter((s) => hasType(s, t))
+  it('가장 가까운 편의점 5곳: 모두 숙소 400m 이내 · 24시간', () => {
+    expect(of('conv')).toHaveLength(5)
+    for (const s of of('conv')) {
+      expect(km(s), s.id).toBeLessThan(0.4)
+      expect(s.hours, s.id).toContain('24시간')
+    }
+  })
+  it('가장 가까운 약국 5곳 (드럭스토어 면세점 핀은 태그로 포함)', () => {
+    expect(of('pharmacy')).toHaveLength(5)
+    expect(of('pharmacy').filter((s) => s.type === 'taxfree')).toHaveLength(1)
+    for (const s of of('pharmacy')) expect(km(s), s.id).toBeLessThan(0.6)
+  })
+  it('돈키호테는 5km 이내 전부, 비슷한 매장도 5km 이내', () => {
+    const dq = of('donki')
+    expect(dq.length).toBeGreaterThanOrEqual(10)
+    for (const s of [...dq, ...of('discount')]) expect(km(s), s.id).toBeLessThan(5)
+    expect(of('discount').length).toBeGreaterThanOrEqual(6)
+    expect(of('discount').some((s) => /MEGA/.test(s.nameJa + s.nameKo))).toBe(false)
+  })
+  it('대표 명소 2곳(후시미 이나리·USJ)은 가는 법 안내가 있음', () => {
+    const lm = ds.spots.filter((s) => s.type === 'landmark')
+    expect(lm.map((s) => s.id).sort()).toEqual(['landmark-fushimi', 'landmark-usj'])
+    for (const s of lm) {
+      expect(s.guide?.length, s.id).toBeGreaterThanOrEqual(3)
+      for (const g of s.guide!) expect(g.items.length, `${s.id} ${g.title}`).toBeGreaterThan(0)
+    }
   })
   it('휴무일은 여행 기간 날짜만', () => {
     const days = TRIP_DAYS.map((d) => d.date)

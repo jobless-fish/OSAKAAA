@@ -1,9 +1,9 @@
 export type Genre = 'meat' | 'noodle' | 'japanese' | 'asian' | 'western'
-export type Area = 'near' | 'umeda' | 'temma' | 'namba' | 'west' | 'tennoji' | 'east' | 'south' | 'southwest' | 'bay'
+export type Area = 'near' | 'umeda' | 'temma' | 'namba' | 'west' | 'tennoji' | 'east' | 'south' | 'southwest' | 'bay' | 'usj' | 'kyoto'
 export type FoodType = 'meal' | 'snack' | 'bar'
-/** 식당이 아닌 장소: 특이한 장소(볼거리) · 주류 상점 · 면세점 · 라이브 바 */
-export type PoiType = 'spot' | 'liquor' | 'taxfree' | 'livebar'
-export const POI_TYPES: readonly PoiType[] = ['spot', 'livebar', 'liquor', 'taxfree']
+/** 식당이 아닌 장소: 대표 명소 · 특이한 장소(볼거리) · 라이브 바 · 주류 상점 · 면세점 · 편의점 · 약국 · 돈키호테 · 비슷한 할인·잡화점 */
+export type PoiType = 'landmark' | 'spot' | 'liquor' | 'taxfree' | 'livebar' | 'conv' | 'pharmacy' | 'donki' | 'discount'
+export const POI_TYPES: readonly PoiType[] = ['landmark', 'spot', 'livebar', 'liquor', 'taxfree', 'conv', 'pharmacy', 'donki', 'discount']
 export type PlaceType = FoodType | PoiType
 export type GroupFit = 'ok' | 'maybe' | 'no'
 
@@ -49,6 +49,10 @@ export interface Spot extends PlaceBase {
   tip: string | null
   infoUrl: string
   infoLabel: string
+  /** 대표 종류(type) 말고도 이 필터에 함께 나오게 할 종류 (예: 면세 드럭스토어 → 약국) */
+  tags?: PoiType[]
+  /** 대표 명소의 가는 법·이벤트 같은 상세 안내 */
+  guide?: { title: string; items: string[] }[]
 }
 
 export type Place = Restaurant | Spot
@@ -74,4 +78,6 @@ export type WithDistance = Place & {
 }
 
 export const isSpot = (p: Place): p is Spot => (POI_TYPES as readonly string[]).includes(p.type)
+/** 대표 종류나 태그 중 하나라도 맞으면 그 종류로 본다 (한 핀이 여러 필터에 나옴) */
+export const hasType = (p: Place, t: PlaceType): boolean => p.type === t || (isSpot(p) && !!p.tags?.includes(t as PoiType))
 export const scoreOf = (p: Place): number | null => (isSpot(p) ? null : p.tabelogScore)

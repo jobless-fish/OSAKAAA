@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet.markercluster'
@@ -66,6 +66,26 @@ function clusterIcon(c: L.MarkerCluster): L.DivIcon {
     className: 'cl-wrap',
     iconSize: [size, size],
   })
+}
+
+/** 대표 명소(후시미 이나리·USJ): 어느 줌에서든 크게 보이는 전용 마커 */
+function landmarkIcon(p: WithDistance, selected: boolean): L.DivIcon {
+  const kind = isSpot(p) ? p.spotKind : ''
+  const html = `<div class="lm ${selected ? 'lm-sel' : ''}"><span class="lm-badge" aria-hidden="true">${isSpot(p) ? p.icon : ''}</span><span class="lm-text"><b>${esc(p.nameKo)}</b><small>★ ${esc(kind)}</small></span></div><i class="lm-tip" aria-hidden="true"></i>`
+  return L.divIcon({ html, className: 'lm-wrap', iconSize: [280, 70], iconAnchor: [140, 70] })
+}
+
+function LandmarkLayer({ places, selectedId, onSelect }: Pick<Props, 'places' | 'selectedId' | 'onSelect'>) {
+  const map = useMap()
+  useEffect(() => {
+    const ms = places.map((p) =>
+      L.marker([p.lat, p.lng], { icon: landmarkIcon(p, p.id === selectedId), title: p.nameKo, alt: p.nameKo, zIndexOffset: 1500, keyboard: true })
+        .on('click', () => onSelect(p.id))
+        .addTo(map),
+    )
+    return () => ms.forEach((m) => m.remove())
+  }, [places, selectedId, onSelect, map])
+  return null
 }
 
 const lodgingIcon = L.divIcon({
@@ -177,7 +197,9 @@ function Controller({ lodging, places, selectedId, bottomInset, recenterKey, fit
 
   useEffect(() => {
     if (fitKey === 0 || places.length === 0) return
-    const b = L.latLngBounds(places.map((p) => [p.lat, p.lng] as [number, number]))
+    // 교토·USJ 같은 먼 대표 명소까지 맞추면 숙소 주변이 너무 작아지므로, 명소만 남았을 때만 포함한다
+    const near = places.filter((p) => p.type !== 'landmark')
+    const b = L.latLngBounds((near.length ? near : places).map((p) => [p.lat, p.lng] as [number, number]))
     b.extend([lodging.lat, lodging.lng])
     map.flyToBounds(b, { paddingTopLeft: [40, 60], paddingBottomRight: [40, 40 + bottomInset], duration: 0.6, maxZoom: CARD_ZOOM })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -189,6 +211,8 @@ function Controller({ lodging, places, selectedId, bottomInset, recenterKey, fit
 export function MapView(props: Props) {
   const { lodging, places, selectedId, onSelect } = props
   const [zoom, setZoom] = useState(INITIAL_ZOOM)
+  const landmarks = useMemo(() => places.filter((p) => p.type === 'landmark'), [places])
+  const others = useMemo(() => places.filter((p) => p.type !== 'landmark'), [places])
 
   return (
     <MapContainer
@@ -206,7 +230,8 @@ export function MapView(props: Props) {
         maxZoom={19}
       />
       <Marker position={[lodging.lat, lodging.lng]} icon={lodgingIcon} zIndexOffset={2000} title="숙소" alt="숙소" keyboard={false} />
-      <ClusterLayer places={places} selectedId={selectedId} onSelect={onSelect} zoom={zoom} />
+      <ClusterLayer places={others} selectedId={selectedId} onSelect={onSelect} zoom={zoom} />
+      <LandmarkLayer places={landmarks} selectedId={selectedId} onSelect={onSelect} />
       <RouteLayer route={props.route} bottomInset={props.bottomInset} />
       <Controller {...props} onZoom={setZoom} />
     </MapContainer>

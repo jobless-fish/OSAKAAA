@@ -3369,7 +3369,10 @@
     "provider": "GSI 지오코더",
     "matched": "大阪府大阪市西成区梅南一丁目１番５号"
    },
-   "image": null
+   "image": null,
+   "tags": [
+    "pharmacy"
+   ]
   },
   {
    "id": "taxfree-daikoku-tengachaya",
@@ -3447,7 +3450,10 @@
     "provider": "GSI 지오코더",
     "matched": "大阪府大阪市浪速区恵美須東三丁目４番３６号"
    },
-   "image": null
+   "image": null,
+   "tags": [
+    "donki"
+   ]
   },
   {
    "id": "taxfree-donki-abeno",
@@ -3473,7 +3479,10 @@
     "provider": "GSI 지오코더",
     "matched": "大阪府大阪市阿倍野区旭町一丁目１番３号"
    },
-   "image": null
+   "image": null,
+   "tags": [
+    "donki"
+   ]
   },
   {
    "id": "taxfree-bic-abeno",
@@ -3708,6 +3717,808 @@
     "matched": "大阪府大阪市浪速区日本橋五丁目１３番７号"
    },
    "image": null
+  },
+  {
+   "id": "conv-fm-asahi2",
+   "type": "conv",
+   "nameKo": "패밀리마트 아사히 2초메점",
+   "nameJa": "ファミリーマート 旭二丁目店",
+   "icon": "🏪",
+   "spotKind": "편의점 (패밀리마트)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 3분 (길 따라 200m)",
+   "description": "숙소에서 가장 가까운 편의점. 24시간 편의점. 음료·도시락·간식·ATM·택배 등 기본은 다 돼요.",
+   "hours": "24시간",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://store.family.co.jp/points/36741",
+   "infoLabel": "패밀리마트 공식 (점포 정보)",
+   "address": "西成区梅南2丁目4-30",
+   "lat": 34.64352,
+   "lng": 135.491104,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区梅南二丁目４番３０号"
+   },
+   "image": null
+  },
+  {
+   "id": "conv-seven-asahi2",
+   "type": "conv",
+   "nameKo": "세븐일레븐 오사카 아사히 2초메점",
+   "nameJa": "セブン-イレブン 大阪旭2丁目店",
+   "icon": "🏪",
+   "spotKind": "편의점 (세븐일레븐)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 3분 (길 따라 230m)",
+   "description": "24시간 편의점. 음료·도시락·간식·ATM·택배 등 기본은 다 돼요.",
+   "hours": "24시간",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.google.com/maps/search/?api=1&query=%E3%82%BB%E3%83%96%E3%83%B3-%E3%82%A4%E3%83%AC%E3%83%96%E3%83%B3%20%E5%A4%A7%E9%98%AA%E6%97%AD2%E4%B8%81%E7%9B%AE%E5%BA%97",
+   "infoLabel": "구글 지도",
+   "address": "西成区旭2丁目8-19",
+   "lat": 34.643974,
+   "lng": 135.490326,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区旭二丁目８番１９号"
+   },
+   "image": null
+  },
+  {
+   "id": "conv-seven-tsurumibashi2",
+   "type": "conv",
+   "nameKo": "세븐일레븐 오사카 쓰루미바시 2초메점",
+   "nameJa": "セブン-イレブン 大阪鶴見橋2丁目店",
+   "icon": "🏪",
+   "spotKind": "편의점 (세븐일레븐)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 3분 (길 따라 270m)",
+   "description": "24시간 편의점. 음료·도시락·간식·ATM·택배 등 기본은 다 돼요.",
+   "hours": "24시간",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://location.sevenbank.co.jp/sevenbank/spot/detail?code=0000031624",
+   "infoLabel": "세븐은행 ATM 위치 안내",
+   "address": "西成区鶴見橋2丁目11-12",
+   "lat": 34.646202,
+   "lng": 135.491379,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区鶴見橋二丁目１１番１２号"
+   },
+   "image": null
+  },
+  {
+   "id": "conv-lawson-tsurumibashi2",
+   "type": "conv",
+   "nameKo": "로손 니시나리 쓰루미바시 2초메점",
+   "nameJa": "ローソン 西成鶴見橋二丁目店",
+   "icon": "🏪",
+   "spotKind": "편의점 (로손)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 4분 (길 따라 300m)",
+   "description": "24시간 편의점. 음료·도시락·간식·ATM·택배 등 기본은 다 돼요.",
+   "hours": "24시간",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://yamabuki-lawson.co.jp/lawson15/",
+   "infoLabel": "운영사 공식 (점포 정보)",
+   "address": "西成区鶴見橋2丁目4-1",
+   "lat": 34.646606,
+   "lng": 135.493027,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区鶴見橋二丁目４番１号"
+   },
+   "image": null
+  },
+  {
+   "id": "conv-lawson-asahi1",
+   "type": "conv",
+   "nameKo": "로손 니시나리 아사히 1초메점",
+   "nameJa": "ローソン 西成旭一丁目店",
+   "icon": "🏪",
+   "spotKind": "편의점 (로손)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 4분 (길 따라 340m)",
+   "description": "24시간 편의점. 음료·도시락·간식·ATM·택배 등 기본은 다 돼요.",
+   "hours": "24시간",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://yamabuki-lawson.co.jp/lawson11/",
+   "infoLabel": "운영사 공식 (점포 정보)",
+   "address": "西成区旭1丁目3-22",
+   "lat": 34.645077,
+   "lng": 135.495193,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区旭一丁目３番２２号"
+   },
+   "image": null
+  },
+  {
+   "id": "pharmacy-kusumoto",
+   "type": "pharmacy",
+   "nameKo": "구스모토 약국",
+   "nameJa": "楠本薬局",
+   "icon": "💊",
+   "spotKind": "약국 (일반의약품 약 200종)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 3분 (길 따라 280m)",
+   "description": "처방전 없이 살 수 있는 일반의약품(OTC)을 약 200종 갖춘 동네 약국. 미리 연락하면 한국어·영어로 간단한 대화가 된다고 등록돼 있어요.",
+   "hours": "월~금 08:30~19:30 · 토 08:30~18:00",
+   "fee": "—",
+   "closedDates": [
+    "2026-11-15"
+   ],
+   "closedNote": "일·공휴일 휴무",
+   "tip": null,
+   "infoUrl": "https://www.google.com/maps/search/?api=1&query=%E6%A5%A0%E6%9C%AC%E8%96%AC%E5%B1%80%20%E5%A4%A7%E9%98%AA%E5%B8%82%E8%A5%BF%E6%88%90%E5%8C%BA%E9%B6%B4%E8%A6%8B%E6%A9%8B1%E4%B8%81%E7%9B%AE17-19",
+   "infoLabel": "구글 지도",
+   "address": "西成区鶴見橋1丁目17-19",
+   "lat": 34.646175,
+   "lng": 135.493317,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区鶴見橋一丁目１７番１９号"
+   },
+   "image": null
+  },
+  {
+   "id": "pharmacy-drugmik",
+   "type": "pharmacy",
+   "nameKo": "드럭 믹 쓰루미바시점",
+   "nameJa": "ドラッグミック鶴見橋店",
+   "icon": "💊",
+   "spotKind": "드럭스토어",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 4분 (길 따라 310m)",
+   "description": "약·화장품·생활용품을 파는 드럭스토어. 아침 8시부터 열고 연중무휴예요.",
+   "hours": "08:00~19:00 · 연중무휴",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://drugmik.com/shopinfo/%e3%83%89%e3%83%a9%e3%83%83%e3%82%b0%e3%83%9f%e3%83%83%e3%82%af%e9%b6%b4%e8%a6%8b%e6%a9%8b%e5%ba%97/",
+   "infoLabel": "드럭 믹 공식 (점포 정보)",
+   "address": "西成区鶴見橋1丁目16-36",
+   "lat": 34.646122,
+   "lng": 135.493683,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区鶴見橋一丁目１６番３６号"
+   },
+   "image": null
+  },
+  {
+   "id": "pharmacy-shoda",
+   "type": "pharmacy",
+   "nameKo": "쇼다 약국",
+   "nameJa": "正田薬局",
+   "icon": "💊",
+   "spotKind": "약국 (일반의약품 약 150종)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 4분 (길 따라 330m)",
+   "description": "일반의약품 약 150종을 갖춘 약국 겸 매장. 미리 연락하면 한국어로 간단한 대화가 된다고 등록돼 있어요.",
+   "hours": "월~금 09:00~20:00 · 토 09:00~17:00",
+   "fee": "—",
+   "closedDates": [
+    "2026-11-15"
+   ],
+   "closedNote": "일·공휴일 휴무",
+   "tip": null,
+   "infoUrl": "https://www.google.com/maps/search/?api=1&query=%E6%AD%A3%E7%94%B0%E8%96%AC%E5%B1%80%20%E5%A4%A7%E9%98%AA%E5%B8%82%E8%A5%BF%E6%88%90%E5%8C%BA%E6%A2%85%E5%8D%971%E4%B8%81%E7%9B%AE4-32",
+   "infoLabel": "구글 지도",
+   "address": "西成区梅南1丁目4-32",
+   "lat": 34.643578,
+   "lng": 135.494797,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区梅南一丁目４番３２号"
+   },
+   "image": null
+  },
+  {
+   "id": "pharmacy-genki",
+   "type": "pharmacy",
+   "nameKo": "겐키 약국",
+   "nameJa": "元気薬局",
+   "icon": "💊",
+   "spotKind": "약국",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 5분 (길 따라 360m)",
+   "description": "숙소 남쪽 골목의 작은 동네 약국. 요일마다 문 닫는 시간이 달라요.",
+   "hours": "월·수·목 09:00~19:00 · 화·금 09:00~17:00 · 토 09:00~13:00",
+   "fee": "—",
+   "closedDates": [
+    "2026-11-15"
+   ],
+   "closedNote": "일·공휴일 휴무",
+   "tip": null,
+   "infoUrl": "https://www.nishinari-ph.jp/phamacy/genki/index.html",
+   "infoLabel": "니시나리구 약제사회",
+   "address": "西成区梅南2丁目5-13",
+   "lat": 34.642059,
+   "lng": 135.49118,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区梅南二丁目５番１３号"
+   },
+   "image": null
+  },
+  {
+   "id": "donki-sennichimae",
+   "type": "donki",
+   "nameKo": "돈키호테 난바 센니치마에점",
+   "nameJa": "ドン・キホーテ なんば千日前店",
+   "icon": "🛍️",
+   "spotKind": "할인 잡화",
+   "area": "namba",
+   "station": "숙소에서 약 2.5km (직선)",
+   "description": "난바 센니치마에 상점가 쪽 돈키호테. 새벽 4시까지 열어요 (11/16만 단축).",
+   "hours": "09:00~다음날 04:00",
+   "fee": "면세 대상 여부는 매장에서 확인",
+   "closedDates": [],
+   "closedNote": "11/16(월)은 재고 조사로 25:00(새벽 1시)까지, 11/17 09:00 재개",
+   "tip": null,
+   "infoUrl": "https://www.donki.com/store/shop_detail.php?shop_id=419",
+   "infoLabel": "돈키호테 공식 (점포 정보)",
+   "address": "中央区難波千日前12-7",
+   "lat": 34.664787,
+   "lng": 135.503281,
+   "geocode": {
+    "provider": "GSI 지오코더 (돈키호테 공식 주소)",
+    "matched": "大阪府大阪市中央区難波千日前１２番７号"
+   },
+   "image": null
+  },
+  {
+   "id": "donki-midosuji",
+   "type": "donki",
+   "nameKo": "돈키호테 도톤보리 미도스지점",
+   "nameJa": "ドン・キホーテ 道頓堀御堂筋店",
+   "icon": "🛍️",
+   "spotKind": "할인 잡화",
+   "area": "namba",
+   "station": "숙소에서 약 2.9km (직선)",
+   "description": "미도스지 큰길가 도톤보리 쪽 돈키호테. 24시간 열어요.",
+   "hours": "24시간",
+   "fee": "면세 대상 여부는 매장에서 확인",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.donki.com/store/shop_detail.php?shop_id=373",
+   "infoLabel": "돈키호테 공식 (점포 정보)",
+   "address": "中央区西心斎橋2-5-9",
+   "lat": 34.669334,
+   "lng": 135.500107,
+   "geocode": {
+    "provider": "GSI 지오코더 (돈키호테 공식 주소)",
+    "matched": "大阪府大阪市中央区西心斎橋二丁目５番９号"
+   },
+   "image": null
+  },
+  {
+   "id": "donki-teradacho",
+   "type": "donki",
+   "nameKo": "돈키호테 데라다초역점",
+   "nameJa": "ドン・キホーテ 寺田町駅店",
+   "icon": "🛍️",
+   "spotKind": "할인 잡화",
+   "area": "tennoji",
+   "station": "숙소에서 약 2.9km (직선)",
+   "description": "JR 데라다초역 근처 돈키호테. 새벽 2시까지 열어요.",
+   "hours": "09:00~다음날 02:00",
+   "fee": "면세 대상 여부는 매장에서 확인",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.donki.com/store/shop_detail.php?shop_id=629",
+   "infoLabel": "돈키호테 공식 (점포 정보)",
+   "address": "天王寺区大道5丁目11-25",
+   "lat": 34.647884,
+   "lng": 135.523315,
+   "geocode": {
+    "provider": "GSI 지오코더 (돈키호테 공식 주소)",
+    "matched": "大阪府大阪市天王寺区大道五丁目１１番２５号"
+   },
+   "image": null
+  },
+  {
+   "id": "donki-dotonbori",
+   "type": "donki",
+   "nameKo": "돈키호테 도톤보리점",
+   "nameJa": "ドン・キホーテ 道頓堀店",
+   "icon": "🛍️",
+   "spotKind": "할인 잡화",
+   "area": "namba",
+   "station": "숙소에서 약 2.9km (직선)",
+   "description": "도톤보리 강변 돈키호테. 24시간 열어요.",
+   "hours": "24시간",
+   "fee": "면세 대상 여부는 매장에서 확인",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.donki.com/store/shop_detail.php?shop_id=110",
+   "infoLabel": "돈키호테 공식 (점포 정보)",
+   "address": "中央区宗右衛門町7-13",
+   "lat": 34.669415,
+   "lng": 135.502563,
+   "geocode": {
+    "provider": "GSI 지오코더 (돈키호테 공식 주소)",
+    "matched": "大阪府大阪市中央区宗右衛門町７番１３号"
+   },
+   "image": null
+  },
+  {
+   "id": "donki-uehommachi",
+   "type": "donki",
+   "nameKo": "돈키호테 우에혼마치점",
+   "nameJa": "ドン・キホーテ 上本町店",
+   "icon": "🛍️",
+   "spotKind": "할인 잡화",
+   "area": "tennoji",
+   "station": "숙소에서 약 3.4km (직선)",
+   "description": "우에혼마치 쪽 돈키호테. 새벽 5시까지 열어서 늦은 쇼핑도 돼요.",
+   "hours": "09:00~다음날 05:00",
+   "fee": "면세 대상 여부는 매장에서 확인",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.donki.com/store/shop_detail.php?shop_id=86",
+   "infoLabel": "돈키호테 공식 (점포 정보)",
+   "address": "天王寺区上之宮町1-24",
+   "lat": 34.662853,
+   "lng": 135.521332,
+   "geocode": {
+    "provider": "GSI 지오코더 (돈키호테 공식 주소)",
+    "matched": "大阪府大阪市天王寺区上之宮町１番２４号"
+   },
+   "image": null
+  },
+  {
+   "id": "donki-bentencho",
+   "type": "donki",
+   "nameKo": "MEGA 돈키호테 벤텐초점",
+   "nameJa": "ドン・キホーテ MEGA 弁天町店",
+   "icon": "🛍️",
+   "spotKind": "대형 할인 잡화",
+   "area": "bay",
+   "station": "숙소에서 약 4.2km (직선)",
+   "description": "JR·지하철 벤텐초역 근처 대형 MEGA 돈키호테. 자정까지 열어요.",
+   "hours": "08:00~24:00",
+   "fee": "면세 대상 여부는 매장에서 확인",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.donki.com/store/shop_detail.php?shop_id=175",
+   "infoLabel": "돈키호테 공식 (점포 정보)",
+   "address": "港区弁天3-13-1",
+   "lat": 34.666176,
+   "lng": 135.454544,
+   "geocode": {
+    "provider": "GSI 지오코더 (돈키호테 공식 주소)",
+    "matched": "大阪府大阪市港区弁天三丁目１３番１号"
+   },
+   "image": null
+  },
+  {
+   "id": "donki-suminoekoen",
+   "type": "donki",
+   "nameKo": "돈키호테 스미노에코엔점",
+   "nameJa": "ドン・キホーテ 住之江公園店",
+   "icon": "🛍️",
+   "spotKind": "할인 잡화",
+   "area": "southwest",
+   "station": "숙소에서 약 4.3km (직선)",
+   "description": "지하철 스미노에코엔역 근처 돈키호테. 새벽 3시까지 열어요.",
+   "hours": "09:00~다음날 03:00",
+   "fee": "면세 대상 여부는 매장에서 확인",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.donki.com/store/shop_detail.php?shop_id=75",
+   "infoLabel": "돈키호테 공식 (점포 정보)",
+   "address": "住之江区新北島1-1-2",
+   "lat": 34.608822,
+   "lng": 135.472885,
+   "geocode": {
+    "provider": "GSI 지오코더 (돈키호테 공식 주소)",
+    "matched": "大阪府大阪市住之江区新北島一丁目１番２号"
+   },
+   "image": null
+  },
+  {
+   "id": "donki-hoenzaka",
+   "type": "donki",
+   "nameKo": "돈키호테 호엔자카점",
+   "nameJa": "ドン・キホーテ 法円坂店",
+   "icon": "🛍️",
+   "spotKind": "할인 잡화",
+   "area": "east",
+   "station": "숙소에서 약 4.6km (직선)",
+   "description": "호엔자카(오사카성 남쪽) 돈키호테. 자정까지 열어요.",
+   "hours": "09:00~24:00",
+   "fee": "면세 대상 여부는 매장에서 확인",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.donki.com/store/shop_detail.php?shop_id=367",
+   "infoLabel": "돈키호테 공식 (점포 정보)",
+   "address": "中央区法円坂2-1-35",
+   "lat": 34.678738,
+   "lng": 135.519653,
+   "geocode": {
+    "provider": "GSI 지오코더 (돈키호테 공식 주소)",
+    "matched": "大阪府大阪市中央区法円坂二丁目１番３５号"
+   },
+   "image": null
+  },
+  {
+   "id": "discount-tamade-tsurumibashi",
+   "type": "discount",
+   "nameKo": "슈퍼 다마데 쓰루미바시점",
+   "nameJa": "スーパー玉出 鶴見橋店",
+   "icon": "🛒",
+   "spotKind": "할인 슈퍼 (오사카 체인)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 4분 (길 따라 290m)",
+   "description": "오사카 지역 할인 슈퍼 체인. 식료품·도시락·술을 숙소 바로 옆에서 24시간 살 수 있어요.",
+   "hours": "24시간",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://supertamade.co.jp/store/",
+   "infoLabel": "슈퍼 다마데 공식 (점포 목록)",
+   "address": "西成区鶴見橋2丁目10-27",
+   "lat": 34.646156,
+   "lng": 135.491089,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区鶴見橋二丁目１０番２７号"
+   },
+   "image": null
+  },
+  {
+   "id": "discount-tamade-hanazono",
+   "type": "discount",
+   "nameKo": "슈퍼 다마데 하나조노점",
+   "nameJa": "スーパー玉出 花園店",
+   "icon": "🛒",
+   "spotKind": "할인 슈퍼 (오사카 체인)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 7분 (길 따라 530m)",
+   "description": "하나조노초역 쪽의 슈퍼 다마데. 24시간 열어요.",
+   "hours": "24시간",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://supertamade.co.jp/store/",
+   "infoLabel": "슈퍼 다마데 공식 (점포 목록)",
+   "address": "西成区花園北2丁目15-23",
+   "lat": 34.644772,
+   "lng": 135.496765,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区花園北二丁目１５番２３号"
+   },
+   "image": null
+  },
+  {
+   "id": "discount-gyomu-tengachaya",
+   "type": "discount",
+   "nameKo": "업무 슈퍼 덴가차야역 앞점",
+   "nameJa": "業務スーパー 天下茶屋駅前店",
+   "icon": "🛒",
+   "spotKind": "업무 슈퍼 (대용량·냉동식품)",
+   "area": "near",
+   "station": "숙소에서 걸어서 약 14분 (길 따라 1130m)",
+   "description": "대용량·냉동식품이 많은 업무용 슈퍼 체인. 숙소에서 먹을 것을 넉넉히 사기 좋아요.",
+   "hours": "09:00~21:00",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.gyomusuper.jp/shop/detail.php?sh_id=1612",
+   "infoLabel": "업무 슈퍼 공식 (점포 정보)",
+   "address": "西成区岸里1丁目3-4",
+   "lat": 34.637047,
+   "lng": 135.495209,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市西成区岸里一丁目３番４号"
+   },
+   "image": null
+  },
+  {
+   "id": "discount-hands-abeno",
+   "type": "discount",
+   "nameKo": "핸즈 아베노 큐즈몰점",
+   "nameJa": "ハンズ あべのキューズモール店",
+   "icon": "🧰",
+   "spotKind": "생활 잡화 (핸즈)",
+   "area": "tennoji",
+   "station": "덴노지역 12번 출구 직결 · 숙소 동쪽 약 1.9km",
+   "description": "생활 잡화·문구·뷰티·아이디어 상품이 많은 핸즈(옛 도큐핸즈). 큐즈몰 지하 1층.",
+   "hours": "10:00~21:00",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://store.hands.net/abeno/",
+   "infoLabel": "핸즈 공식 (점포 정보)",
+   "address": "阿倍野区阿倍野筋1丁目6-1",
+   "lat": 34.646053,
+   "lng": 135.512772,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市阿倍野区阿倍野筋一丁目６番１号"
+   },
+   "image": null
+  },
+  {
+   "id": "discount-loft-abeno",
+   "type": "discount",
+   "nameKo": "아베노 로프트",
+   "nameJa": "あべのロフト",
+   "icon": "🧰",
+   "spotKind": "생활 잡화 (로프트)",
+   "area": "tennoji",
+   "station": "덴노지역 직결 · 숙소 동쪽 약 1.9km",
+   "description": "문구·화장품·생활 잡화의 로프트. 아베노 하루카스 긴테쓰 본점 윙관 7층에 있어요. 면세 수속은 문 닫기 30분 전까지.",
+   "hours": "10:00~20:00",
+   "fee": "면세 수속: 폐점 30분 전까지",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.loft.co.jp/shop_list/detail.php?shop_id=31",
+   "infoLabel": "로프트 공식 (점포 정보)",
+   "address": "阿倍野区阿倍野筋1丁目1-43",
+   "lat": 34.64645,
+   "lng": 135.513275,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市阿倍野区阿倍野筋一丁目１番４３号"
+   },
+   "image": null,
+   "tags": [
+    "taxfree"
+   ]
+  },
+  {
+   "id": "discount-loft-namba",
+   "type": "discount",
+   "nameKo": "난바 로프트",
+   "nameJa": "なんばロフト",
+   "icon": "🧰",
+   "spotKind": "생활 잡화 (로프트)",
+   "area": "namba",
+   "station": "난카이 난바역 바로 · 숙소 북쪽 약 2.2km",
+   "description": "난바 파크스 5층의 로프트. 문구·화장품·생활 잡화.",
+   "hours": "11:00~21:00",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://www.loft.co.jp/shop_list/detail.php?shop_id=47",
+   "infoLabel": "로프트 공식 (점포 정보)",
+   "address": "浪速区難波中2丁目10-70",
+   "lat": 34.662411,
+   "lng": 135.501251,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市浪速区難波中二丁目１０番７０号"
+   },
+   "image": null
+  },
+  {
+   "id": "discount-handsbe-namba",
+   "type": "discount",
+   "nameKo": "핸즈 비 난바 CITY점",
+   "nameJa": "ハンズ ビー なんばCITY店",
+   "icon": "🧰",
+   "spotKind": "생활 잡화 (핸즈 소형점)",
+   "area": "namba",
+   "station": "난바역 바로 · 숙소 북쪽 약 2.4km",
+   "description": "난바 CITY 남관 2층의 소형 핸즈. 난바역에서 바로라 지나가며 들르기 좋아요.",
+   "hours": "11:00~21:00",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://info.hands.net/list/kansai.html",
+   "infoLabel": "핸즈 공식 (관서 점포 목록)",
+   "address": "中央区難波5丁目1-60",
+   "lat": 34.664921,
+   "lng": 135.501114,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市中央区難波五丁目１番６０号"
+   },
+   "image": null
+  },
+  {
+   "id": "discount-hands-shinsaibashi",
+   "type": "discount",
+   "nameKo": "핸즈 신사이바시점",
+   "nameJa": "ハンズ 心斎橋店",
+   "icon": "🧰",
+   "spotKind": "생활 잡화 (핸즈 대형점)",
+   "area": "namba",
+   "station": "신사이바시역 바로 · 숙소 북쪽 약 3.4km",
+   "description": "신사이바시 PARCO 9~11층의 대형 핸즈. 생활 잡화·문구·아이디어 상품.",
+   "hours": "10:00~20:00",
+   "fee": "—",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": null,
+   "infoUrl": "https://store.hands.net/shinsaibashi/",
+   "infoLabel": "핸즈 공식 (점포 정보)",
+   "address": "中央区心斎橋筋1丁目8-3",
+   "lat": 34.674038,
+   "lng": 135.501312,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市中央区心斎橋筋一丁目８番３号"
+   },
+   "image": null
+  },
+  {
+   "id": "landmark-fushimi",
+   "type": "landmark",
+   "nameKo": "후시미 이나리 신사 (교토)",
+   "nameJa": "伏見稲荷大社",
+   "icon": "⛩️",
+   "spotKind": "교토 대표 명소 · 센본도리이",
+   "area": "kyoto",
+   "station": "게이한 후시미이나리역 걸어서 5분 · JR 이나리역 바로 앞",
+   "description": "주홍색 도리이 약 1만 개가 산길을 따라 이어지는 센본도리이로 유명한 신사.",
+   "hours": "경내 자유 (기도 접수 08:30~16:00경)",
+   "fee": "경내 무료",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": "센본도리이 산길은 계단이 많아요. 편한 신발을 신고, 사진은 다른 참배객을 배려해서 찍어 주세요.",
+   "infoUrl": "https://inari.jp/access/",
+   "infoLabel": "후시미 이나리 신사 공식 (교통)",
+   "address": "京都市 伏見区深草薮之内町68",
+   "lat": 34.967037,
+   "lng": 135.773499,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "京都府京都市伏見区深草藪之内町６８番地"
+   },
+   "image": null,
+   "guide": [
+    {
+     "title": "추천 길: 전철 (아침 출발)",
+     "items": [
+      "숙소 → 하나조노초역 걸어서 약 7분 (560m)",
+      "하나조노초 [요쓰바시선] → 다이코쿠초에서 [미도스지선] 갈아타기 → 요도야바시",
+      "요도야바시 [게이한 본선 특급] → 단바바시에서 보통·준급으로 갈아타기 → 후시미이나리역, 내려서 동쪽으로 걸어서 5분",
+      "예: 평일 08:00 하나조노초 출발 → 09:15 후시미이나리 도착 (약 1시간 15분, 갈아타기 3번)",
+      "첫차: 하나조노초 05:24 → 후시미이나리 06:39 (평일 기준, 토·일은 시각이 조금 달라요)"
+     ]
+    },
+    {
+     "title": "전철 요금",
+     "items": [
+      "1인 720엔 (지하철 240엔 + 게이한 480엔, ICOCA·현금 같음)",
+      "6명 편도 4,320엔 · 왕복 8,640엔",
+      "게이한·오사카 메트로 1일 프리티켓(디지털, 2,160엔)은 왕복(1,440엔)보다 비싸서, 교토에서 게이한으로 더 다닐 때만 이득"
+     ]
+    },
+    {
+     "title": "다른 길",
+     "items": [
+      "덴가차야역(걸어서 약 15분)에서 [사카이스지선] → 기타하마 → 게이한: 갈아타기 2번, 요금 같음 (평일 08:02 → 09:15)",
+      "JR: 신이마미야역(걸어서 약 21분) → 오사카 순환선 → 오사카 → JR 교토선 신쾌속 → 교토 → 나라선 → 이나리역(신사 바로 앞), 1인 960엔 · 약 1시간 14분"
+     ]
+    },
+    {
+     "title": "택시로 가면",
+     "items": [
+      "길 약 52km (고속도로 경로) — 오사카 택시 요금표(보통차 상한)로 계산하면 1대 약 2.2만 엔 안팎 + 고속도로 통행료 별도",
+      "보통 택시는 4명까지라 6명은 2대 → 약 4.3만~4.6만 엔 + 통행료 (막히면 더 나와요)",
+      "5~9명 타는 대형(점보) 택시는 앱·전화로 미리 예약",
+      "전철(6명 4,320엔)이 훨씬 싸고 시간도 비슷해요"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "landmark-usj",
+   "type": "landmark",
+   "nameKo": "유니버설 스튜디오 재팬 (USJ)",
+   "nameJa": "ユニバーサル・スタジオ・ジャパン",
+   "icon": "🎢",
+   "spotKind": "테마파크",
+   "area": "usj",
+   "station": "JR 유메사키선 유니버설시티역",
+   "description": "해리 포터·슈퍼 닌텐도 월드가 있는 테마파크. 여행 기간에는 25주년 겨울 이벤트가 시작돼요.",
+   "hours": "11/13 08:00~20:00 · 11/14 08:00~22:00 · 11/15 08:30~22:00 · 11/16 09:00~22:00 · 11/17 09:00~20:00",
+   "fee": "입장권 별도 (날짜별 가격)",
+   "closedDates": [],
+   "closedNote": null,
+   "tip": "쇼·그리팅 시각은 당일 공식 앱으로 확인하세요.",
+   "infoUrl": "https://www.usj.co.jp/web/ja/jp/park-guide/schedule/park-hour",
+   "infoLabel": "USJ 공식 (영업시간)",
+   "address": "此花区桜島2丁目1-33",
+   "lat": 34.667965,
+   "lng": 135.435638,
+   "geocode": {
+    "provider": "GSI 지오코더",
+    "matched": "大阪府大阪市此花区桜島二丁目１番３３号"
+   },
+   "image": null,
+   "guide": [
+    {
+     "title": "영업시간 (공식 캘린더, 바뀔 수 있음)",
+     "items": [
+      "11/13(금) 08:00~20:00",
+      "11/14(토) 08:00~22:00",
+      "11/15(일) 08:30~22:00",
+      "11/16(월) 09:00~22:00",
+      "11/17(화) 09:00~20:00"
+     ]
+    },
+    {
+     "title": "추천 길: JR",
+     "items": [
+      "숙소 → JR 신이마미야역 걸어서 약 21분 (1.7km)",
+      "신이마미야 [JR 오사카 순환선 외선, 벤텐초·니시쿠조 방면] → 니시쿠조에서 [JR 유메사키선] 갈아타기 → 유니버설시티역",
+      "예: 08:02 신이마미야 → 08:23 유니버설시티 (약 21분)",
+      "1인 200엔 · 6명 1,200엔"
+     ]
+    },
+    {
+     "title": "덜 걷고 싶으면",
+     "items": [
+      "하나조노초역(걸어서 약 7분) [요쓰바시선] → 다이코쿠초 → 난바 → 오사카난바 [한신 난바선] → 니시쿠조 → [유메사키선] 유니버설시티",
+      "약 34분 · 1인 590엔 · 6명 3,540엔"
+     ]
+    },
+    {
+     "title": "택시로 가면",
+     "items": [
+      "길 약 10.5km — 오사카 택시 요금표(보통차 상한)로 1대 약 4,700엔 (막히거나 고속도로를 타면 더 나와요)",
+      "6명은 2대 → 약 9,400엔"
+     ]
+    },
+    {
+     "title": "여행 기간 이벤트 (공식 발표)",
+     "items": [
+      "「유니버설 홀리데이 원더스 ~Discover U!!!~」 11/13(금)~2027/1/17 — 여행 첫날 시작",
+      "유니버설 푸드 페스티벌 (겨울 한정 메뉴, 11/13~)",
+      "「호그와트 매지컬 나이트 ~윈터 매직~」 호그와트 성 매핑 쇼, 약 10분 (11/13~, 횟수는 날마다 달라요)",
+      "호그와트 캐슬워크 (성 안을 걸어서 도는 특별 체험, ~1/17)",
+      "겨울 한정 그리팅: 미니언 쿨 윈터 그리팅 · 미니언 징글 벨로 미트 & 그리트 · 유니버설 원더랜드 ~렛츠 스마일 투게더!~",
+      "싱잉 쇼 「파워 오브 록 ~홀리데이 로킹!~」",
+      "슈퍼 닌텐도 월드 5주년 피날레 스티커 (11/12~1/11)",
+      "야간 쇼 「라이트 업 더 나이트」·「조이 오브 라이츠」는 11/25부터라 여행 기간엔 없어요"
+     ]
+    },
+    {
+     "title": "공연 시각",
+     "items": [
+      "11/13~17의 날짜별 쇼 시각은 아직 공개 전이에요 (공식 스케줄은 당일분만 올라옴) — 당일 공식 앱에서 확인하세요",
+      "입장권 가격은 날짜마다 달라요 — 공식 WEB 티켓 스토어에서 확인"
+     ]
+    }
+   ]
   }
  ]
 }

@@ -8,7 +8,9 @@ const CARD_H = 118
  * 이미 놓인 카드와 겹치는 곳은 작은 점으로 바꾼다. 화면 이동과 무관하게 줌 단위로만 계산한다.
  */
 export function pickCards(places: WithDistance[], selectedId: string | null, project: (p: WithDistance) => { x: number; y: number }): Set<string> {
-  const pri = (p: WithDistance) => (p.id === selectedId ? 10 : p.type === 'spot' ? 6 : p.type === 'livebar' ? 5 : isSpot(p) ? 3.2 : (p.tabelogScore ?? 3))
+  const pri = (p: WithDistance) =>
+    p.id === selectedId ? 10 : p.type === 'landmark' ? 8 : p.type === 'spot' ? 6 : p.type === 'livebar' ? 5
+      : p.type === 'conv' || p.type === 'pharmacy' ? 2.5 : isSpot(p) ? 3.2 : (p.tabelogScore ?? 3)
   const order = [...places].sort((a, b) => pri(b) - pri(a))
   const placed: { x: number; y: number }[] = []
   const ok = new Set<string>()

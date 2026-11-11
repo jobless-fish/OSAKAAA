@@ -1,4 +1,4 @@
-import { isSpot, POI_TYPES, scoreOf, type Genre, type PoiType, type WithDistance } from '../types'
+import { hasType, isSpot, POI_TYPES, scoreOf, type Genre, type PlaceType, type PoiType, type WithDistance } from '../types'
 import type { SortKey } from './filters'
 
 /** 묶음 키: 음식 장르 5개 + 식당이 아닌 장소 종류 */
@@ -22,19 +22,21 @@ export interface PlaceGroup {
   items: WithDistance[]
 }
 
-const keyOf = (p: WithDistance): GroupKey => (isSpot(p) ? p.type : p.genre)
+/** 묶음 키. 종류 필터가 켜져 있고 태그로 그 종류에 들어온 곳이면 그 종류 묶음에 넣는다 */
+const keyOf = (p: WithDistance, prefer?: PlaceType | 'all'): GroupKey =>
+  isSpot(p) ? (prefer && prefer !== 'all' && hasType(p, prefer) ? (prefer as PoiType) : p.type) : p.genre
 
 /** 장르 순서대로 묶고(식당이 아닌 장소는 종류별로 맨 끝), 묶음 안은 별점순 */
-export function groupByGenre(list: WithDistance[], order: Genre[]): PlaceGroup[] {
+export function groupByGenre(list: WithDistance[], order: Genre[], prefer?: PlaceType | 'all'): PlaceGroup[] {
   const keys: GroupKey[] = [...order, ...POI_TYPES]
   return keys
-    .map((key) => ({ key, items: list.filter((r) => keyOf(r) === key).sort(byScore) }))
+    .map((key) => ({ key, items: list.filter((r) => keyOf(r, prefer) === key).sort(byScore) }))
     .filter((g) => g.items.length > 0)
 }
 
 /** 목록에 보일 순서 그대로 정렬 (카테고리별이면 묶음 순서를 펼친 것) */
-export function sortPlaces(list: WithDistance[], key: SortKey, order: Genre[]): WithDistance[] {
+export function sortPlaces(list: WithDistance[], key: SortKey, order: Genre[], prefer?: PlaceType | 'all'): WithDistance[] {
   if (key === 'distance') return [...list].sort(byDistance)
-  if (key === 'category') return groupByGenre(list, order).flatMap((g) => g.items)
+  if (key === 'category') return groupByGenre(list, order, prefer).flatMap((g) => g.items)
   return [...list].sort(byScore)
 }
