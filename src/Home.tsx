@@ -263,7 +263,7 @@ function TopicCard({ t, children, open }: { t: Topic; children?: React.ReactNode
 export function Home({ go }: Props) {
   const { lodging } = data
   return (
-    <div className="app">
+    <div className="app home-app">
       <header className="topbar">
         <div className="brand">
           <span className="logo" aria-hidden="true">O</span>
@@ -275,15 +275,21 @@ export function Home({ go }: Props) {
       </header>
       <main className="home">
         <div className="home-inner">
-          <section className="hero">
-            <p className="hero-kicker">숙소 기준 여행 가이드</p>
-            <h1 className="hero-title">오사카 11/13–11/17</h1>
-            <p className="hero-addr" lang="ja">숙소 {lodging.address}</p>
-            <button type="button" className="btn btn-primary hero-cta" onClick={() => go('/map')}>
-              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M15 4 9 2 3 4v18l6-2 6 2 6-2V2zm-1 15.6-4-1.3V4.4l4 1.3z" /></svg>
-              지도로 이동
-            </button>
-            <p className="hero-sub">맛집 {data.restaurants.length}곳(6명 OK) · 편의점 · 약국 · 돈키호테 · 면세점 · 볼거리</p>
+          <section className="hero" aria-labelledby="trip-title">
+            <div className="hero-copy">
+              <p className="hero-kicker">2026.11.13–11.17 · 6인 여행</p>
+              <h1 className="hero-title" id="trip-title">오사카<br />여행 가이드</h1>
+              <p className="hero-sub">6명이 함께 앉을 수 있는 맛집 {data.restaurants.length}곳과<br className="hero-break" /> 숙소에서 출발하는 오사카 지도.</p>
+              <button type="button" className="btn btn-primary hero-cta" onClick={() => go('/map')}>
+                여행 지도 열기 <span aria-hidden="true">↗</span>
+              </button>
+              <p className="hero-addr">숙소 <span lang="ja">{lodging.address}</span></p>
+            </div>
+            <div className="hero-photo" aria-hidden="true" />
+          </section>
+
+          <section className="quick-section" aria-labelledby="quick-title">
+            <h2 className="section-title" id="quick-title">숙소 주변 찾기</h2>
             <div className="hero-quick">
               <button type="button" className="hq" onClick={() => go('/map?type=conv')}><b>24</b> 편의점</button>
               <button type="button" className="hq" onClick={() => go('/map?type=pharmacy')}><b>+</b> 약국</button>
@@ -292,7 +298,9 @@ export function Home({ go }: Props) {
             </div>
           </section>
 
-          <TopicCard t={AIRPORT} open>
+          <section className="trip-details" aria-labelledby="details-title">
+          <h2 className="section-title" id="details-title">이동과 쇼핑</h2>
+          <TopicCard t={AIRPORT}>
             <div className="topic-actions">
               <a className="btn btn-primary" href={MAPS_KIX} target="_blank" rel="noopener noreferrer">간사이 공항에서 숙소로 길찾기</a>
               <a className="btn" href={MAPS_ITM} target="_blank" rel="noopener noreferrer">이타미 공항에서 숙소로 길찾기</a>
@@ -306,9 +314,10 @@ export function Home({ go }: Props) {
               <button type="button" className="btn" onClick={() => go('/map?type=pharmacy')}>지도에서 약국 보기</button>
             </div>
           </TopicCard>
+          </section>
 
           <section className="lm-links" aria-label="대표 명소 바로가기">
-            <h2>대표 명소 — 지도에서 가는 법 보기</h2>
+            <h2 className="section-title">대표 명소</h2>
             <div className="lm-grid">
               {LANDMARKS.map((l) => (
                 <button key={l.id} type="button" className="lm-link" onClick={() => go(`/map?place=${l.id}`)}>
