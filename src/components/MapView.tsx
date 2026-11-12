@@ -10,6 +10,7 @@ interface Props {
   lodging: Lodging
   places: WithDistance[]
   selectedId: string | null
+  pins: ReadonlySet<string>
   onSelect: (id: string) => void
   /** 모바일 바텀시트가 가리는 하단 높이(px). 선택한 곳을 그 위쪽에 보이게 한다. */
   bottomInset: number
@@ -69,22 +70,35 @@ function clusterIcon(c: L.MarkerCluster): L.DivIcon {
 }
 
 /** 대표 명소(후시미 이나리·USJ): 어느 줌에서든 크게 보이는 전용 마커 */
-function landmarkIcon(p: WithDistance, selected: boolean): L.DivIcon {
+function landmarkIcon(p: WithDistance, selected: boolean, pinned: boolean): L.DivIcon {
   const kind = isSpot(p) ? p.spotKind : ''
-  const html = `<div class="lm ${selected ? 'lm-sel' : ''}"><span class="lm-badge" aria-hidden="true">${isSpot(p) ? p.icon : ''}</span><span class="lm-text"><b>${esc(p.nameKo)}</b><small>★ ${esc(kind)}</small></span></div><i class="lm-tip" aria-hidden="true"></i>`
+  const html = `<div class="lm ${selected ? 'lm-sel' : ''}"><span class="lm-badge" aria-hidden="true">${isSpot(p) ? p.icon : ''}</span><span class="lm-text"><b>${esc(p.nameKo)}</b><small>${pinned ? '★ 핀 저장 · ' : ''}${esc(kind)}</small></span></div><i class="lm-tip" aria-hidden="true"></i>`
   return L.divIcon({ html, className: 'lm-wrap', iconSize: [280, 70], iconAnchor: [140, 70] })
 }
 
-function LandmarkLayer({ places, selectedId, onSelect }: Pick<Props, 'places' | 'selectedId' | 'onSelect'>) {
+function pinnedIcon(selected: boolean): L.DivIcon {
+  return L.divIcon({
+    html: '<span aria-hidden="true">★</span>',
+    className: `saved-marker ${selected ? 'saved-marker-selected' : ''}`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+  })
+}
+
+function FeaturedLayer({ places, selectedId, pins, onSelect }: Pick<Props, 'places' | 'selectedId' | 'pins' | 'onSelect'>) {
   const map = useMap()
   useEffect(() => {
-    const ms = places.map((p) =>
-      L.marker([p.lat, p.lng], { icon: landmarkIcon(p, p.id === selectedId), title: p.nameKo, alt: p.nameKo, zIndexOffset: 1500, keyboard: true })
+    const ms = places.map((p) => {
+      const selected = p.id === selectedId
+      const pinned = pins.has(p.id)
+      const icon = p.type === 'landmark' ? landmarkIcon(p, selected, pinned) : pinnedIcon(selected)
+      const label = pinned ? `${p.nameKo} · 핀으로 저장됨` : p.nameKo
+      return L.marker([p.lat, p.lng], { icon, title: label, alt: label, zIndexOffset: selected ? 1900 : pinned ? 1700 : 1500, keyboard: true })
         .on('click', () => onSelect(p.id))
-        .addTo(map),
-    )
+        .addTo(map)
+    })
     return () => ms.forEach((m) => m.remove())
-  }, [places, selectedId, onSelect, map])
+  }, [places, selectedId, pins, onSelect, map])
   return null
 }
 
@@ -209,10 +223,10 @@ function Controller({ lodging, places, selectedId, bottomInset, recenterKey, fit
 }
 
 export function MapView(props: Props) {
-  const { lodging, places, selectedId, onSelect } = props
+  const { lodging, places, selectedId, pins, onSelect } = props
   const [zoom, setZoom] = useState(INITIAL_ZOOM)
-  const landmarks = useMemo(() => places.filter((p) => p.type === 'landmark'), [places])
-  const others = useMemo(() => places.filter((p) => p.type !== 'landmark'), [places])
+  const featured = useMemo(() => places.filter((p) => p.type === 'landmark' || pins.has(p.id)), [places, pins])
+  const others = useMemo(() => places.filter((p) => p.type !== 'landmark' && !pins.has(p.id)), [places, pins])
 
   return (
     <MapContainer
@@ -231,7 +245,7 @@ export function MapView(props: Props) {
       />
       <Marker position={[lodging.lat, lodging.lng]} icon={lodgingIcon} zIndexOffset={2000} title="숙소" alt="숙소" keyboard={false} />
       <ClusterLayer places={others} selectedId={selectedId} onSelect={onSelect} zoom={zoom} />
-      <LandmarkLayer places={landmarks} selectedId={selectedId} onSelect={onSelect} />
+      <FeaturedLayer places={featured} selectedId={selectedId} pins={pins} onSelect={onSelect} />
       <RouteLayer route={props.route} bottomInset={props.bottomInset} />
       <Controller {...props} onZoom={setZoom} />
     </MapContainer>
