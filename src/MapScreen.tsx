@@ -117,7 +117,6 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
     }),
     [all],
   )
-  const foodCount = data.restaurants.length
 
   const select = useCallback(
     (id: string, fromMap: boolean) => {
@@ -218,11 +217,7 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
         />
       </div>
       <p className="count" aria-live="polite">
-        {places.length}곳 표시 중{' '}
-        <span className="muted">
-          / 맛집 {foodCount}
-          {POI_TYPES.map((t) => ` · ${POI_META[t].label} ${quickCounts[t]}`).join('')}
-        </span>
+        {places.length}곳 표시 중
       </p>
       {places.length === 0 ? (
         <div className="empty">
@@ -304,7 +299,8 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
       <main className="layout">
         {isDesktop && (
           <aside className="panel" aria-label="맛집 목록과 필터">
-            <h1 className="panel-title">숙소 근처 맛집 (6명 OK)<br /><span className="panel-sub">+ 명소 · 볼거리 · 라이브 바 · 술 · 면세점 · 편의점 · 약국 · 돈키호테</span></h1>
+            <h1 className="panel-title">오사카 여행 지도</h1>
+            <p className="panel-sub">6인 예약 맛집과 숙소 주변 장소를 찾아보세요.</p>
             <Filters value={filters} onChange={setFilters} areas={AREA_ORDER} genres={GENRE_ORDER} />
             {list}
           </aside>
@@ -337,7 +333,7 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
             onVisibleHeight={setSheetH}
             header={
               <div className="sheet-bar">
-                <h1 className="sheet-title">6명 OK 맛집·장소 <span className="muted">{places.length}곳</span></h1>
+                <h1 className="sheet-title">맛집·장소 <span className="muted">{places.length}곳</span></h1>
                 <button
                   type="button"
                   className={`btn btn-sm ${showFilters ? 'btn-primary' : ''}`}
