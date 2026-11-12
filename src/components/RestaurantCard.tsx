@@ -14,6 +14,8 @@ interface Props {
   /** 지도 위에 도보 경로 그리기 */
   onRoute: (id: string) => void
   routeActive: boolean
+  pinned: boolean
+  onPin: () => void
 }
 
 type D = { distanceKm: number; walkMin: number }
@@ -23,6 +25,13 @@ export function RestaurantCard(props: Props) {
   return isSpot(r) ? <SpotCard {...props} s={r} /> : <FoodCard {...props} f={r} />
 }
 
+function PinButton({ place, pinned, onPin }: { place: string; pinned: boolean; onPin: () => void }) {
+  return (
+    <button type="button" className="pin-button" aria-label={`${place} 핀 저장`} aria-pressed={pinned} onClick={onPin}>
+      <span aria-hidden="true">{pinned ? '★' : '☆'}</span>
+    </button>
+  )
+}
 
 function RouteLinks({ id, lat, lng, lodging, onRoute, routeActive, walk = true }: { id: string; lat: number; lng: number; lodging: Lodging; onRoute: (id: string) => void; routeActive: boolean; walk?: boolean }) {
   return (
@@ -70,7 +79,7 @@ function Guide({ guide }: { guide: NonNullable<Spot['guide']> }) {
   )
 }
 
-function FoodCard({ f: r, lodging, selected, onSelect, onRoute, routeActive }: Props & { f: Restaurant & D }) {
+function FoodCard({ f: r, lodging, selected, onSelect, onRoute, routeActive, pinned, onPin }: Props & { f: Restaurant & D }) {
   const closed = closedLabels(r.closedDates)
   return (
     <article className={`card ${selected ? 'is-selected' : ''}`} id={`card-${r.id}`} aria-labelledby={`title-${r.id}`}>
@@ -101,6 +110,7 @@ function FoodCard({ f: r, lodging, selected, onSelect, onRoute, routeActive }: P
           </div>
         </div>
       </button>
+      <PinButton place={r.nameKo} pinned={pinned} onPin={onPin} />
       {selected && (
         <div className="card-detail" id={`detail-${r.id}`}>
           <dl>
@@ -138,7 +148,7 @@ function feeChip(s: Spot): string {
   return s.fee.startsWith('무료') ? '무료' : s.fee === '—' ? '관람 시설 아님' : '유료'
 }
 
-function SpotCard({ s, lodging, selected, onSelect, onRoute, routeActive }: Props & { s: Spot & D }) {
+function SpotCard({ s, lodging, selected, onSelect, onRoute, routeActive, pinned, onPin }: Props & { s: Spot & D }) {
   const closed = closedLabels(s.closedDates)
   const meta = POI_META[s.type]
   return (
@@ -174,6 +184,7 @@ function SpotCard({ s, lodging, selected, onSelect, onRoute, routeActive }: Prop
           </div>
         </div>
       </button>
+      <PinButton place={s.nameKo} pinned={pinned} onPin={onPin} />
       {selected && (
         <div className="card-detail" id={`detail-${s.id}`}>
           <p className="spot-desc">{s.description}</p>

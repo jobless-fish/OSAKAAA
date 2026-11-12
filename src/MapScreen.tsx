@@ -15,6 +15,7 @@ import { transitUrl } from './lib/links'
 import { QuickFilters } from './components/QuickFilters'
 import { SortControl } from './components/SortControl'
 import { BottomSheet, type Snap } from './components/BottomSheet'
+import { loadPins, savePins } from './lib/pins'
 
 const data = raw as Dataset
 const AREA_ORDER: Area[] = ['near', 'tennoji', 'south', 'southwest', 'bay', 'namba', 'west', 'umeda', 'temma', 'east', 'usj', 'kyoto']
@@ -76,6 +77,8 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
   const [recenterKey, setRecenterKey] = useState(0)
   const [fitKey, setFitKey] = useState(initialType ? 1 : 0)
   const [route, setRoute] = useState<RouteState | null>(null)
+  const [pins, setPins] = useState(loadPins)
+  const [pinStorageError, setPinStorageError] = useState(false)
   const routeAbort = useRef<AbortController | null>(null)
 
   const all: WithDistance[] = useMemo(
@@ -107,6 +110,16 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
 
   // 필터로 사라진 곳은 선택 해제된 것으로 본다
   const activeId = selectedId && places.some((p) => p.id === selectedId) ? selectedId : null
+  const pinnedPlaces = places.filter((p) => pins.has(p.id))
+  const unpinnedPlaces = places.filter((p) => !pins.has(p.id))
+
+  function togglePin(id: string) {
+    const next = new Set(pins)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    setPins(next)
+    setPinStorageError(!savePins(next))
+  }
 
   const quickCounts = useMemo(
     () => ({
@@ -199,7 +212,7 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
 
   const card = (r: WithDistance) => (
     <li key={r.id}>
-      <RestaurantCard r={r} lodging={lodging} selected={r.id === activeId} onSelect={(id) => select(id, false)} onRoute={onRoute} routeActive={route?.id === r.id} />
+      <RestaurantCard r={r} lodging={lodging} selected={r.id === activeId} onSelect={(id) => select(id, false)} onRoute={onRoute} routeActive={route?.id === r.id} pinned={pins.has(r.id)} onPin={() => togglePin(r.id)} />
     </li>
   )
 
@@ -219,6 +232,7 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
       <p className="count" aria-live="polite">
         {places.length}곳 표시 중
       </p>
+      {pinStorageError && <p className="pin-storage-note" role="status">브라우저 저장소를 사용할 수 없어 이 화면에서만 핀이 유지됩니다.</p>}
       {places.length === 0 ? (
         <div className="empty">
           <p>조건에 맞는 곳이 없어요.</p>
@@ -226,8 +240,13 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
         </div>
       ) : (
         <ul className="list">
-          {filters.sort === 'category'
-            ? groupByGenre(places, GENRE_ORDER, filters.type).flatMap((g) => [
+          {pinnedPlaces.length > 0 && (
+            <li className="group-header pinned-header">
+              <h2>핀으로 저장한 장소 <span className="muted">{pinnedPlaces.length}곳</span></h2>
+            </li>
+          )}
+          {[...pinnedPlaces.map(card), ...(filters.sort === 'category'
+            ? groupByGenre(unpinnedPlaces, GENRE_ORDER, filters.type).flatMap((g) => [
                 <li key={`h-${g.key}`} className={`group-header ${g.key in POI_META ? `group-spot group-${g.key}` : ''}`}>
                   <h2>
                     {g.key in POI_META ? `${POI_META[g.key as PoiType].mark} ${POI_META[g.key as PoiType].label}` : GENRE_LABEL[g.key as Genre]}{' '}
@@ -236,7 +255,7 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
                 </li>,
                 ...g.items.map(card),
               ])
-            : places.map(card)}
+            : unpinnedPlaces.map(card))]}
         </ul>
       )}
       <footer className="notes">
@@ -310,6 +329,7 @@ export function MapScreen({ initialPlace = null, initialType = null, onHome }: P
             lodging={lodging}
             places={places}
             selectedId={activeId}
+            pins={pins}
             onSelect={selectFromMap}
             bottomInset={isDesktop ? 0 : Math.min(sheetH, 420)}
             recenterKey={recenterKey}

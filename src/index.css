@@ -477,6 +477,41 @@ button, select { font: inherit; color: inherit; }
 .lm-link-star { color: var(--color-primary); }
 .home-foot { padding-top: 16px; border-top: 1px solid var(--color-border); }
 
+.card { position: relative; }
+.card-main { padding-right: 54px; }
+.pin-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-card);
+  color: var(--color-primary);
+  font-size: 23px;
+  cursor: pointer;
+}
+.pin-button:hover { background: var(--color-muted); }
+.pin-button[aria-pressed="true"], .saved-marker {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.pin-storage-note { margin: 0 2px 12px; color: var(--color-muted-foreground); font-size: 13px; }
+.saved-marker {
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--color-card);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgb(36 33 30 / 0.36);
+  font-size: 18px;
+}
+.saved-marker-selected { outline: 3px solid var(--color-accent); }
+
 @media (max-width: 760px) {
   .home-inner { padding-top: 16px; gap: 24px; }
   .hero { grid-template-columns: 1fr; }
